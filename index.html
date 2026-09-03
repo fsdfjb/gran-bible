@@ -38,7 +38,8 @@
         .audio-player { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10,10,15,0.95); border-top: 2px solid var(--aged-gold); padding: 10px 20px; display: flex; align-items: center; gap: 15px; z-index: 1000; backdrop-filter: blur(10px); }
         .play-btn { background: var(--aged-gold); border: none; color: var(--void-black); width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .audio-info { flex: 1; font-family: var(--font-tech); font-size: 0.85rem; color: var(--amber); }
-        .voice-select { background: rgba(0,0,0,0.5); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 5px 10px; border-radius: 3px; font-family: var(--font-tech); font-size: 0.75rem; cursor: pointer; max-width: 150px; }
+        .voice-label { color: var(--neon-cyan); font-family: var(--font-tech); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-right: 8px; }
+        .voice-select { background: rgba(0,0,0,0.5); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 5px 8px; border-radius: 3px; font-family: var(--font-tech); font-size: 0.75rem; cursor: pointer; max-width: 180px; }
 
         .chapter { display: none; animation: fadeIn 0.5s ease; }
         .chapter.active { display: block; }
@@ -124,8 +125,9 @@
                 text-align: center;
             }
             .audio-player {
-                padding: 6px 10px;
+                padding: 8px 10px;
                 flex-wrap: wrap;
+                gap: 8px;
             }
             .play-btn {
                 width: 32px;
@@ -136,10 +138,14 @@
                 font-size: 0.7rem;
                 order: 3;
                 width: 100%;
+                margin-top: 5px;
+            }
+            .voice-label {
+                font-size: 0.65rem;
             }
             .voice-select {
                 font-size: 0.65rem;
-                max-width: 120px;
+                max-width: 140px;
                 padding: 4px 6px;
             }
             .chapter-content {
@@ -257,9 +263,13 @@
 
     <div class="audio-player">
         <button class="play-btn" id="playBtn" onclick="toggleAudio()">▶</button>
-        <div class="audio-info"><div id="audioTitle">Выберите главу для озвучки</div><div id="audioStatus" style="font-size: 0.7rem; color: var(--neon-cyan);">Голос: <span id="currentVoice">Загрузка...</span></div></div>
+        <div class="audio-info">
+            <div id="audioTitle">Выберите главу для озвучки</div>
+            <div id="audioStatus" style="font-size: 0.7rem; color: var(--neon-cyan);">Текущий: <span id="currentVoice">Загрузка...</span></div>
+        </div>
+        <label class="voice-label" for="voiceSelect">ГОЛОС:</label>
         <select class="voice-select" id="voiceSelect" onchange="changeVoice()">
-            <option value="">Загрузка голосов...</option>
+            <option value="">Загрузка...</option>
         </select>
     </div>
 
@@ -299,7 +309,8 @@
         function changeVoice() {
             const select = document.getElementById('voiceSelect');
             selectedVoiceIndex = parseInt(select.value);
-            document.getElementById('currentVoice').innerText = voices[selectedVoiceIndex] ? voices[selectedVoiceIndex].name : 'По умолчанию';
+            const voice = voices[selectedVoiceIndex];
+            document.getElementById('currentVoice').innerText = voice ? voice.name : 'По умолчанию';
             if (isSpeaking) {
                 stopAudio();
                 setTimeout(() => playAudio(), 100);
@@ -312,8 +323,8 @@
             const text = activeChapter.innerText;
             currentUtterance = new SpeechSynthesisUtterance(text);
             currentUtterance.lang = 'ru-RU';
-            currentUtterance.rate = 0.85; // Медленнее для чёткости
-            currentUtterance.pitch = 0.9;  // Чуть ниже для приятности
+            currentUtterance.rate = 0.95; // Чуть медленнее для чёткости, но энергично
+            currentUtterance.pitch = 1.0;  // Нормальный тон
             currentUtterance.volume = 1.0;
             
             if (voices.length > 0 && selectedVoiceIndex < voices.length) {
@@ -336,24 +347,40 @@
             document.getElementById('playBtn').innerText = '▶'; 
         }
 
-        // Загрузка голосов
+        // Загрузка всех голосов
         function loadVoices() {
             voices = speechSynthesis.getVoices();
             const select = document.getElementById('voiceSelect');
-            const russianVoices = voices.filter(v => v.lang.includes('ru'));
             
-            if (russianVoices.length > 0) {
+            if (voices.length > 0) {
                 select.innerHTML = '';
+                
+                // Сначала русские голоса
+                const russianVoices = voices.filter(v => v.lang.includes('ru'));
                 russianVoices.forEach((voice, index) => {
                     const option = document.createElement('option');
                     option.value = voices.indexOf(voice);
-                    option.text = voice.name + ' (' + voice.lang + ')';
+                    option.text = '🇷🇺 ' + voice.name + ' (' + voice.lang + ')';
                     select.appendChild(option);
                 });
                 
-                // Выбираем первый русский голос по умолчанию
-                selectedVoiceIndex = voices.indexOf(russianVoices[0]);
-                document.getElementById('currentVoice').innerText = russianVoices[0].name;
+                // Потом остальные
+                const otherVoices = voices.filter(v => !v.lang.includes('ru'));
+                otherVoices.forEach((voice) => {
+                    const option = document.createElement('option');
+                    option.value = voices.indexOf(voice);
+                    option.text = '🌍 ' + voice.name + ' (' + voice.lang + ')';
+                    select.appendChild(option);
+                });
+                
+                // Выбираем первый русский голос
+                if (russianVoices.length > 0) {
+                    selectedVoiceIndex = voices.indexOf(russianVoices[0]);
+                    document.getElementById('currentVoice').innerText = russianVoices[0].name;
+                } else if (voices.length > 0) {
+                    selectedVoiceIndex = 0;
+                    document.getElementById('currentVoice').innerText = voices[0].name;
+                }
             }
         }
 
@@ -364,6 +391,8 @@
         
         // Загружаем голоса при старте
         setTimeout(loadVoices, 100);
+        // Повторная загрузка через 500мс (на случай медленной загрузки)
+        setTimeout(loadVoices, 500);
     </script>
 </body>
 </html>
