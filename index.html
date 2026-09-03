@@ -24,7 +24,7 @@
         .game-hud { position: fixed; top: 0; left: 0; right: 0; background: rgba(10, 10, 15, 0.95); border-bottom: 2px solid var(--neon-cyan); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; backdrop-filter: blur(10px); }
         .hud-logo { font-family: var(--font-tech); font-size: 1.5rem; font-weight: bold; color: var(--aged-gold); letter-spacing: 3px; text-shadow: 0 0 10px rgba(212,175,55,0.5); }
         .hud-stats { display: flex; gap: 15px; }
-        .stat-box { background: rgba(0, 217, 255, 0.1); border: 1px solid var(--neon-cyan); padding: 5px 10px; border-radius: 3px; font-family: var(--font-tech); font-size: 0.8rem; }
+        .stat-box { background: rgba(0, 217, 255, 0.1); border: 1px solid var(--neon-cyan); padding: 5px 10px; border-radius: 3px; font-family: var(--font-tech); font-size: 0.8rem; min-width: 90px; text-align: center; }
         .stat-label { color: var(--neon-cyan); font-size: 0.6rem; text-transform: uppercase; }
         .stat-value { color: #fff; font-weight: bold; }
         .currency-display { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--aged-gold); padding: 5px 15px; border-radius: 3px; text-align: right; }
@@ -38,6 +38,7 @@
         .audio-player { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10,10,15,0.95); border-top: 2px solid var(--aged-gold); padding: 10px 20px; display: flex; align-items: center; gap: 15px; z-index: 1000; backdrop-filter: blur(10px); }
         .play-btn { background: var(--aged-gold); border: none; color: var(--void-black); width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .audio-info { flex: 1; font-family: var(--font-tech); font-size: 0.85rem; color: var(--amber); }
+        .voice-select { background: rgba(0,0,0,0.5); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 5px 10px; border-radius: 3px; font-family: var(--font-tech); font-size: 0.75rem; cursor: pointer; max-width: 150px; }
 
         .chapter { display: none; animation: fadeIn 0.5s ease; }
         .chapter.active { display: block; }
@@ -77,30 +78,31 @@
                 flex-wrap: wrap;
             }
             .hud-logo { 
-                font-size: 0.95rem;
+                font-size: 0.9rem;
                 flex: 0 0 auto;
-                min-width: 60px;
+                min-width: 55px;
             }
             .hud-stats { 
                 display: flex;
-                gap: 5px;
+                gap: 4px;
             }
             .stat-box {
-                padding: 3px 6px;
-                font-size: 0.65rem;
+                padding: 3px 5px;
+                font-size: 0.6rem;
+                min-width: 65px;
             }
             .stat-label {
-                font-size: 0.5rem;
+                font-size: 0.45rem;
             }
             .stat-value {
-                font-size: 0.7rem;
+                font-size: 0.65rem;
             }
             .currency-display {
                 padding: 3px 6px;
-                font-size: 0.7rem;
+                font-size: 0.65rem;
             }
             .currency-value {
-                font-size: 0.85rem;
+                font-size: 0.8rem;
             }
             .game-container { 
                 padding: 120px 10px 85px;
@@ -123,6 +125,7 @@
             }
             .audio-player {
                 padding: 6px 10px;
+                flex-wrap: wrap;
             }
             .play-btn {
                 width: 32px;
@@ -131,6 +134,13 @@
             }
             .audio-info {
                 font-size: 0.7rem;
+                order: 3;
+                width: 100%;
+            }
+            .voice-select {
+                font-size: 0.65rem;
+                max-width: 120px;
+                padding: 4px 6px;
             }
             .chapter-content {
                 padding: 12px;
@@ -247,7 +257,10 @@
 
     <div class="audio-player">
         <button class="play-btn" id="playBtn" onclick="toggleAudio()">▶</button>
-        <div class="audio-info"><div id="audioTitle">Выберите главу для озвучки</div><div id="audioStatus" style="font-size: 0.7rem; color: var(--neon-cyan);">Голосовой движок: ОФЛАЙН</div></div>
+        <div class="audio-info"><div id="audioTitle">Выберите главу для озвучки</div><div id="audioStatus" style="font-size: 0.7rem; color: var(--neon-cyan);">Голос: <span id="currentVoice">Загрузка...</span></div></div>
+        <select class="voice-select" id="voiceSelect" onchange="changeVoice()">
+            <option value="">Загрузка голосов...</option>
+        </select>
     </div>
 
     <script>
@@ -263,6 +276,8 @@
 
         let isSpeaking = false;
         let currentUtterance = null;
+        let selectedVoiceIndex = 0;
+        let voices = [];
 
         function updateAudioTitle(chapterId) {
             const titles = {
@@ -281,23 +296,28 @@
             if (isSpeaking) stopAudio(); else playAudio();
         }
 
+        function changeVoice() {
+            const select = document.getElementById('voiceSelect');
+            selectedVoiceIndex = parseInt(select.value);
+            document.getElementById('currentVoice').innerText = voices[selectedVoiceIndex] ? voices[selectedVoiceIndex].name : 'По умолчанию';
+            if (isSpeaking) {
+                stopAudio();
+                setTimeout(() => playAudio(), 100);
+            }
+        }
+
         function playAudio() {
             const activeChapter = document.querySelector('.chapter.active .chapter-content');
             if (!activeChapter) return;
             const text = activeChapter.innerText;
             currentUtterance = new SpeechSynthesisUtterance(text);
             currentUtterance.lang = 'ru-RU';
-            currentUtterance.rate = 1.0;
-            currentUtterance.pitch = 1.0;
+            currentUtterance.rate = 0.85; // Медленнее для чёткости
+            currentUtterance.pitch = 0.9;  // Чуть ниже для приятности
             currentUtterance.volume = 1.0;
             
-            const voices = speechSynthesis.getVoices();
-            // Берём первый попавшийся русский голос без фильтрации
-            const ruVoice = voices.find(v => v.lang.includes('ru'));
-            
-            if (ruVoice) {
-                currentUtterance.voice = ruVoice;
-                console.log('Используется голос:', ruVoice.name);
+            if (voices.length > 0 && selectedVoiceIndex < voices.length) {
+                currentUtterance.voice = voices[selectedVoiceIndex];
             }
             
             currentUtterance.onend = () => { 
@@ -307,7 +327,7 @@
             
             speechSynthesis.speak(currentUtterance);
             isSpeaking = true; 
-            document.getElementById('playBtn').innerText = '';
+            document.getElementById('playBtn').innerText = '⏸';
         }
 
         function stopAudio() { 
@@ -316,12 +336,34 @@
             document.getElementById('playBtn').innerText = '▶'; 
         }
 
-        // Предзагрузка голосов
-        if (speechSynthesis.onvoiceschanged !== undefined) {
-            speechSynthesis.onvoiceschanged = () => {
-                console.log('Доступные голоса:', speechSynthesis.getVoices());
-            };
+        // Загрузка голосов
+        function loadVoices() {
+            voices = speechSynthesis.getVoices();
+            const select = document.getElementById('voiceSelect');
+            const russianVoices = voices.filter(v => v.lang.includes('ru'));
+            
+            if (russianVoices.length > 0) {
+                select.innerHTML = '';
+                russianVoices.forEach((voice, index) => {
+                    const option = document.createElement('option');
+                    option.value = voices.indexOf(voice);
+                    option.text = voice.name + ' (' + voice.lang + ')';
+                    select.appendChild(option);
+                });
+                
+                // Выбираем первый русский голос по умолчанию
+                selectedVoiceIndex = voices.indexOf(russianVoices[0]);
+                document.getElementById('currentVoice').innerText = russianVoices[0].name;
+            }
         }
+
+        // Инициализация
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = loadVoices;
+        }
+        
+        // Загружаем голоса при старте
+        setTimeout(loadVoices, 100);
     </script>
 </body>
 </html>
