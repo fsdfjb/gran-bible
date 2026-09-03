@@ -61,68 +61,82 @@
         .game-table th { color: var(--neon-cyan); font-family: var(--font-tech); text-transform: uppercase; font-size: 0.85rem; background: rgba(0,217,255,0.1); }
 
         .warning-box { background: rgba(255,51,51,0.1); border: 1px solid var(--alert-red); border-left: 4px solid var(--alert-red); padding: 15px; margin: 20px 0; color: #ffcccc; }
-        .warning-box::before { content: ' ВНИМАНИЕ: '; color: var(--alert-red); font-weight: bold; font-family: var(--font-tech); }
+        .warning-box::before { content: '⚠ ВНИМАНИЕ: '; color: var(--alert-red); font-weight: bold; font-family: var(--font-tech); }
         .quote-block { background: rgba(0,217,255,0.05); border-left: 4px solid var(--neon-cyan); padding: 20px; margin: 20px 0; font-style: italic; }
         .quote-author { text-align: right; color: var(--aged-gold); margin-top: 10px; font-style: normal; font-size: 0.9rem;}
 
         @media (max-width: 768px) {
             .game-hud { 
                 flex-direction: row; 
-                gap: 8px; 
-                padding: 8px 12px;
+                gap: 5px; 
+                padding: 6px 10px;
                 position: fixed;
                 top: 0;
                 height: auto;
-                min-height: 55px;
+                min-height: 50px;
                 flex-wrap: wrap;
             }
             .hud-logo { 
-                font-size: 1.1rem;
-                flex: 1;
-                min-width: 80px;
+                font-size: 0.95rem;
+                flex: 0 0 auto;
+                min-width: 60px;
             }
             .hud-stats { 
-                display: none;
+                display: flex;
+                gap: 5px;
+            }
+            .stat-box {
+                padding: 3px 6px;
+                font-size: 0.65rem;
+            }
+            .stat-label {
+                font-size: 0.5rem;
+            }
+            .stat-value {
+                font-size: 0.7rem;
             }
             .currency-display {
-                padding: 4px 8px;
-                font-size: 0.8rem;
+                padding: 3px 6px;
+                font-size: 0.7rem;
+            }
+            .currency-value {
+                font-size: 0.85rem;
             }
             .game-container { 
-                padding: 130px 12px 90px;
+                padding: 120px 10px 85px;
             }
             .chapter-title { 
-                font-size: 1.4rem; 
+                font-size: 1.3rem; 
                 letter-spacing: 2px;
             }
             .game-nav { 
-                top: 65px;
-                padding: 10px;
-                gap: 6px;
+                top: 60px;
+                padding: 8px;
+                gap: 5px;
             }
             .nav-btn {
-                padding: 8px 10px;
-                font-size: 0.7rem;
-                flex: 1 1 calc(50% - 6px);
+                padding: 6px 8px;
+                font-size: 0.65rem;
+                flex: 1 1 calc(50% - 5px);
                 min-width: 0;
                 text-align: center;
             }
             .audio-player {
-                padding: 8px 12px;
+                padding: 6px 10px;
             }
             .play-btn {
-                width: 35px;
-                height: 35px;
-                font-size: 1rem;
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
             }
             .audio-info {
-                font-size: 0.75rem;
+                font-size: 0.7rem;
             }
             .chapter-content {
-                padding: 15px;
+                padding: 12px;
             }
             .chapter-content h3 {
-                font-size: 1.1rem;
+                font-size: 1rem;
             }
         }
     </style>
@@ -273,30 +287,17 @@
             const text = activeChapter.innerText;
             currentUtterance = new SpeechSynthesisUtterance(text);
             currentUtterance.lang = 'ru-RU';
-            currentUtterance.rate = 0.95;
-            currentUtterance.pitch = 0.7;
+            currentUtterance.rate = 1.0;
+            currentUtterance.pitch = 1.0;
             currentUtterance.volume = 1.0;
             
             const voices = speechSynthesis.getVoices();
-            // Приоритет: мужской русский голос
-            const preferredNames = ['yuri', 'dmitri', 'pavel', 'ivan', 'male', 'ru-ru'];
-            let selectedVoice = null;
+            // Берём первый попавшийся русский голос без фильтрации
+            const ruVoice = voices.find(v => v.lang.includes('ru'));
             
-            for (let name of preferredNames) {
-                selectedVoice = voices.find(v => 
-                    v.lang.includes('ru') && 
-                    v.name.toLowerCase().includes(name)
-                );
-                if (selectedVoice) break;
-            }
-            
-            // Если не нашли по имени — берём любой русский
-            if (!selectedVoice) {
-                selectedVoice = voices.find(v => v.lang.includes('ru'));
-            }
-            
-            if (selectedVoice) {
-                currentUtterance.voice = selectedVoice;
+            if (ruVoice) {
+                currentUtterance.voice = ruVoice;
+                console.log('Используется голос:', ruVoice.name);
             }
             
             currentUtterance.onend = () => { 
@@ -306,7 +307,7 @@
             
             speechSynthesis.speak(currentUtterance);
             isSpeaking = true; 
-            document.getElementById('playBtn').innerText = '⏸';
+            document.getElementById('playBtn').innerText = '';
         }
 
         function stopAudio() { 
@@ -318,7 +319,7 @@
         // Предзагрузка голосов
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = () => {
-                console.log('Голоса загружены:', speechSynthesis.getVoices().length);
+                console.log('Доступные голоса:', speechSynthesis.getVoices());
             };
         }
     </script>
