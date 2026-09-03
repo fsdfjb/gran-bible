@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>ГРАНЬ | Космическая Библия</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="https://via.placeholder.com/192/d4af37/000000?text=ГРАНЬ">
+    <style>
+        :root {
+            --font-ui: 'Segoe UI', Roboto, sans-serif;
+            --font-tech: 'Consolas', 'Courier New', monospace;
+            --rust: #b7410e; --neon-cyan: #00d9ff; --amber: #ffb347;
+            --void-black: #0a0a0f; --aged-gold: #d4af37; --alert-red: #ff3333;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--void-black); color: #e0e0e0; font-family: var(--font-ui); overflow-x: hidden; line-height: 1.6; }
+        .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2)); background-size: 100% 4px; pointer-events: none; z-index: 9999; opacity: 0.15; }
+        .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(1px 1px at 20px 30px, #fff, transparent), radial-gradient(2px 2px at 50px 160px, var(--neon-cyan), transparent); background-repeat: repeat; background-size: 200px 200px; opacity: 0.3; z-index: -2; }
+        
+        .game-hud { position: fixed; top: 0; left: 0; right: 0; background: rgba(10, 10, 15, 0.95); border-bottom: 2px solid var(--neon-cyan); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; backdrop-filter: blur(10px); }
+        .hud-logo { font-family: var(--font-tech); font-size: 1.5rem; font-weight: bold; color: var(--aged-gold); letter-spacing: 3px; text-shadow: 0 0 10px rgba(212,175,55,0.5); }
+        .hud-stats { display: flex; gap: 15px; }
+        .stat-box { background: rgba(0, 217, 255, 0.1); border: 1px solid var(--neon-cyan); padding: 5px 10px; border-radius: 3px; font-family: var(--font-tech); font-size: 0.8rem; }
+        .stat-label { color: var(--neon-cyan); font-size: 0.6rem; text-transform: uppercase; }
+        .stat-value { color: #fff; font-weight: bold; }
+        .currency-display { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--aged-gold); padding: 5px 15px; border-radius: 3px; text-align: right; }
+        .currency-value { font-family: var(--font-tech); color: var(--aged-gold); font-weight: bold; }
+
+        .game-container { max-width: 1200px; margin: 0 auto; padding: 80px 20px 100px; }
+        .game-nav { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; position: sticky; top: 60px; z-index: 100; background: rgba(10,10,15,0.9); padding: 15px; border: 1px solid var(--neon-cyan); border-radius: 5px; backdrop-filter: blur(10px); }
+        .nav-btn { background: rgba(0,0,0,0.5); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 10px 15px; font-family: var(--font-tech); font-size: 0.85rem; cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
+        .nav-btn:hover, .nav-btn.active { background: var(--neon-cyan); color: var(--void-black); box-shadow: 0 0 15px rgba(0,217,255,0.5); }
+
+        .audio-player { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10,10,15,0.95); border-top: 2px solid var(--aged-gold); padding: 10px 20px; display: flex; align-items: center; gap: 15px; z-index: 1000; backdrop-filter: blur(10px); }
+        .play-btn { background: var(--aged-gold); border: none; color: var(--void-black); width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .audio-info { flex: 1; font-family: var(--font-tech); font-size: 0.85rem; color: var(--amber); }
+
+        .chapter { display: none; animation: fadeIn 0.5s ease; }
+        .chapter.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .chapter-header { text-align: center; margin-bottom: 30px; padding: 20px; border-bottom: 2px solid var(--aged-gold); }
+        .chapter-number { font-family: var(--font-tech); color: var(--rust); letter-spacing: 3px; font-size: 0.9rem; }
+        .chapter-title { font-size: 2.5rem; color: var(--aged-gold); text-transform: uppercase; letter-spacing: 5px; margin-top: 10px;}
+        .chapter-content { background: rgba(0,0,0,0.4); border-left: 3px solid var(--aged-gold); padding: 25px; margin-bottom: 20px; }
+        .chapter-content h3 { color: var(--neon-cyan); font-size: 1.4rem; margin: 20px 0 10px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(0,217,255,0.3); padding-bottom: 5px;}
+        .chapter-content p { margin-bottom: 15px; text-align: justify; }
+        .highlight { color: var(--amber); font-weight: bold; }
+
+        .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin: 20px 0; }
+        .resource-card { background: rgba(26,26,46,0.6); border: 1px solid var(--aged-gold); padding: 15px; border-radius: 5px; transition: transform 0.2s; }
+        .resource-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(212,175,55,0.2); }
+        .resource-name { font-family: var(--font-tech); color: var(--aged-gold); font-size: 1.2rem; margin-bottom: 5px;}
+        .resource-slang { color: var(--neon-cyan); font-style: italic; font-size: 0.9rem; margin-bottom: 10px;}
+
+        .game-table { width: 100%; border-collapse: collapse; margin: 20px 0; background: rgba(0,0,0,0.3); }
+        .game-table th, .game-table td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,217,255,0.2); }
+        .game-table th { color: var(--neon-cyan); font-family: var(--font-tech); text-transform: uppercase; font-size: 0.85rem; background: rgba(0,217,255,0.1); }
+
+        .warning-box { background: rgba(255,51,51,0.1); border: 1px solid var(--alert-red); border-left: 4px solid var(--alert-red); padding: 15px; margin: 20px 0; color: #ffcccc; }
+        .warning-box::before { content: '⚠ ВНИМАНИЕ: '; color: var(--alert-red); font-weight: bold; font-family: var(--font-tech); }
+        .quote-block { background: rgba(0,217,255,0.05); border-left: 4px solid var(--neon-cyan); padding: 20px; margin: 20px 0; font-style: italic; }
+        .quote-author { text-align: right; color: var(--aged-gold); margin-top: 10px; font-style: normal; font-size: 0.9rem;}
+
+        @media (max-width: 768px) {
+            .game-hud { flex-direction: column; gap: 10px; padding: 10px; }
+            .hud-stats { width: 100%; justify-content: space-between; }
+            .chapter-title { font-size: 1.8rem; }
+            .game-nav { top: 100px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    <div class="stars"></div>
+
+    <header class="game-hud">
+        <div class="hud-logo">ГРАНЬ</div>
+        <div class="hud-stats">
+            <div class="stat-box"><div class="stat-label">Статус</div><div class="stat-value">СТАЖЁР</div></div>
+            <div class="stat-box"><div class="stat-label">Сектор</div><div class="stat-value">ПЕРИФЕРИЯ</div></div>
+        </div>
+        <div class="currency-display"><div class="stat-label">Баланс</div><div class="currency-value">0  ГЛН</div></div>
+    </header>
+
+    <div class="game-container">
+        <nav class="game-nav">
+            <button class="nav-btn active" onclick="showChapter('intro')">01. Введение</button>
+            <button class="nav-btn" onclick="showChapter('history')">02. История</button>
+            <button class="nav-btn" onclick="showChapter('economy')">03. Экономика</button>
+            <button class="nav-btn" onclick="showChapter('resources')">04. Ресурсы</button>
+            <button class="nav-btn" onclick="showChapter('factions')">05. Фракции</button>
+            <button class="nav-btn" onclick="showChapter('slang')">06. Сленг</button>
+            <button class="nav-btn" onclick="showChapter('locations')">07. Локации</button>
+        </nav>
+
+        <div id="intro" class="chapter active">
+            <div class="chapter-header"><div class="chapter-number">МОДУЛЬ 01</div><h2 class="chapter-title">Добро пожаловать на Грань</h2></div>
+            <div class="chapter-content">
+                <p><span class="highlight">СИСТЕМНОЕ СООБЩЕНИЕ:</span> Вы получили доступ к зашифрованному архиву данных о пограничных территориях галактики. Эта информация предназначена только для сертифицированных капитанов.</p>
+                <p><span class="highlight">ГРАНЬ</span> — это не просто регион космоса. Это последняя граница между цивилизацией и хаосом. Здесь, на самом краю известного пространства, заканчиваются законы центральных миров и начинаются правила выживания.</p>
+                <div class="quote-block">Здесь не спрашивают, откуда ты. Спрашивают, сколько у тебя в трюме и не течёт ли реактор.<div class="quote-author">— Капитан Рен, 2147 год</div></div>
+            </div>
+        </div>
+
+        <div id="history" class="chapter">
+            <div class="chapter-header"><div class="chapter-number">МОДУЛЬ 02</div><h2 class="chapter-title">Хроники Освоения</h2></div>
+            <div class="chapter-content">
+                <h3>Эпоха Великого Сжатия</h3>
+                <p>Всё началось три столетия назад, когда центральные миры галактики закрыли свои границы. <span class="highlight">«Великое Сжатие»</span> — так историки назвали период изоляции богатых планет от внешних территорий.</p>
+                <p>Логистические компании, оказавшиеся запертыми на периферии, объединились в <span class="highlight">Консорциум «Меридиан»</span>. Они не завоевали эти земли силой — они купили их, одну станцию за другой.</p>
+            </div>
+        </div>
+
+        <div id="economy" class="chapter">
+            <div class="chapter-header"><div class="chapter-number">МОДУЛЬ 03</div><h2 class="chapter-title">Экономическая Система</h2></div>
+            <div class="chapter-content">
+                <p>На Грани нет золота. Есть только <span class="highlight">энергия</span> — единственная валюта, которая имеет значение.</p>
+                <table class="game-table">
+                    <thead><tr><th>Валюта</th><th>Обозначение</th><th>Обеспечение</th></tr></thead>
+                    <tbody><tr><td><strong>Гелион</strong></td><td>ГЛН ☉</td><td>1 мегаватт-час энергии</td></tr><tr><td><strong>Эон</strong></td><td>30 дней</td><td>Доступ к глубокому космосу</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="resources" class="chapter">
+            <div class="chapter-header"><div class="chapter-number">МОДУЛЬ 04</div><h2 class="chapter-title">Минеральные Ресурсы</h2></div>
+            <div class="chapter-content">
+                <p>Семь ключевых минералов определяют экономику Грани.</p>
+                <div class="resource-grid">
+                    <div class="resource-card"><div class="resource-name">Феррит</div><div class="resource-slang">«Ржавка»</div><p>Базовый металл. Из него варят корпуса кораблей и мечты новичков.</p></div>
+                    <div class="resource-card"><div class="resource-name">Аурит</div><div class="resource-slang">«Заря»</div><p>Золотистый, радиоактивный. Тот, кто нашёл жилу аурита, либо богач, либо мертвец.</p></div>
+                    <div class="resource-card"><div class="resource-name">Эфирит</div><div class="resource-slang">«Дыхание»</div><p>Легендарная руда глубин. Те, кто его добывал, редко возвращаются рассказать.</p></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="factions" class="chapter">
+            <div class="chapter-header"><div class="chapter-number">МОДУЛЬ 05</div><h2 class="chapter-title">Фракции Грани</h2></div>
+            <div class="chapter-content">
+                <h3>Консорциум «Меридиан»</h3>
+                <p>Торговая сверхструктура. Не воюет — покупает. Не угрожает — выставляет счёт. Их девиз: «Порядок — это прибыльность».</p>
+                <h3>Синдикат «Глубина»</h3>
+                <p>Союз шахтёров. Грубые, спаянные, упрямые. Их закон: «Не бросай своего в открытом космосе».</p>
+                <h3>«Стервятники»</h3>
+                <p>Пираты и рейдеры. Без флага, без кодекса, без жалости. На Грани говорят: «Если ты видишь Стервятника — ты уже опоздал».</p>
+            </div>
+        </div>
+
+        <div id="slang" class="chapter">
+            <div class="chapter-header"><div class="chapter-number">МОДУЛЬ 06</div><h2 class="chapter-title">Шахтёрский Сленг</h2></div>
+            <div class="chapter-content">
+                <table class="game-table">
+                    <thead><tr><th>Выражение</th><th>Значение</th></tr></thead>
+                    <tbody>
+                        <tr><td>«Глотнуть пыли»</td><td>Обанкротиться или потерять корабль</td></tr>
+                        <tr><td>«Поймать призрака»</td><td>Найти жилу Ксенита</td></tr>
+                        <tr><td>«Ржаветь в доке»</td><td>Сидеть без дела из-за нехватки Гелионов</td></tr>
+                        <tr><td>«Холодная сварка»</td><td>Временный ремонт в полевых условиях</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="locations" class="chapter">
+            <div class="chapter-header"><div class="chapter-number">МОДУЛЬ 07</div><h2 class="chapter-title">Ключевые Локации</h2></div>
+            <div class="chapter-content">
+                <h3>Меридиан-Прайм</h3>
+                <p>Торговое сердце Грани. Многоуровневая станция-кольцо диаметром 15 километров, вращающаяся вокруг чёрной дыры.</p>
+                <div class="warning-box">В Поясе «Шёпот» зафиксированы фантомные сигналы. Не доверяйте приборам. Доверяйте глазам.</div>
+                <h3>Пояс «Шёпот»</h3>
+                <p>Астероидное поле с аномальной гравитацией. Богато на Ксенит и Эфирит. Сканеры здесь работают с помехами.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="audio-player">
+        <button class="play-btn" id="playBtn" onclick="toggleAudio()">▶</button>
+        <div class="audio-info"><div id="audioTitle">Выберите главу для озвучки</div><div id="audioStatus" style="font-size: 0.7rem; color: var(--neon-cyan);">Голосовой движок: ОФЛАЙН</div></div>
+    </div>
+
+    <script>
+        function showChapter(id) {
+            document.querySelectorAll('.chapter').forEach(c => c.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            if (isSpeaking) stopAudio();
+            updateAudioTitle(id);
+        }
+
+        let isSpeaking = false;
+        let currentUtterance = null;
+
+        function updateAudioTitle(chapterId) {
+            const titles = {'intro': 'Модуль 01: Добро пожаловать на Грань', 'history': 'Модуль 02: Хроники Освоения', 'economy': 'Модуль 03: Экономическая Система', 'resources': 'Модуль 04: Минеральные Ресурсы', 'factions': 'Модуль 05: Фракции Грани', 'slang': 'Модуль 06: Шахтёрский Сленг', 'locations': 'Модуль 07: Ключевые Локации'};
+            document.getElementById('audioTitle').innerText = titles[chapterId] || 'Текст главы';
+        }
+
+        function toggleAudio() {
+            if (isSpeaking) stopAudio(); else playAudio();
+        }
+
+        function playAudio() {
+            const activeChapter = document.querySelector('.chapter.active .chapter-content');
+            if (!activeChapter) return;
+            const text = activeChapter.innerText;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            currentUtterance.lang = 'ru-RU';
+            currentUtterance.rate = 1.0; currentUtterance.pitch = 0.9;
+            const voices = speechSynthesis.getVoices();
+            const ruVoice = voices.find(v => v.lang.includes('ru'));
+            if (ruVoice) currentUtterance.voice = ruVoice;
+            currentUtterance.onend = () => { isSpeaking = false; document.getElementById('playBtn').innerText = '▶'; };
+            speechSynthesis.speak(currentUtterance);
+            isSpeaking = true; document.getElementById('playBtn').innerText = '⏸';
+        }
+
+        function stopAudio() { speechSynthesis.cancel(); isSpeaking = false; document.getElementById('playBtn').innerText = '▶'; }
+    </script>
+</body>
+</html>
