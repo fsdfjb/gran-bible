@@ -425,18 +425,18 @@
         /* === HUD РАДАР (фиксированный в углу) === */
         .hud-radar {
             position: fixed;
-            bottom: 80px;
-            right: 20px;
+            bottom: 90px;
+            right: 15px;
             z-index: 998;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .radar {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             border: 2px solid var(--accent-cyan);
             border-radius: 50%;
             background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, rgba(0, 0, 0, 0.7) 100%);
@@ -484,7 +484,7 @@
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 6px; height: 6px;
+            width: 5px; height: 5px;
             background: var(--accent-cyan);
             border-radius: 50%;
             box-shadow: 0 0 10px var(--accent-cyan);
@@ -492,7 +492,7 @@
 
         .radar-target {
             position: absolute;
-            width: 4px; height: 4px;
+            width: 3px; height: 3px;
             background: var(--accent-red);
             border-radius: 50%;
             box-shadow: 0 0 8px var(--accent-red);
@@ -510,14 +510,17 @@
 
         .radar-label {
             font-family: var(--font-mono);
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             color: var(--accent-cyan);
             text-transform: uppercase;
             letter-spacing: 2px;
             text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 6px;
+            border-radius: 3px;
         }
 
-        /* === АУДИО ПАНЕЛЬ === */
+        /* === АУДИО ПАНЕЛЬ С СЕТКОЙ МИКРОФОНА === */
         .audio-panel {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: var(--bg-darker);
@@ -526,6 +529,26 @@
             z-index: 1000;
             display: flex; align-items: center; gap: 15px;
             backdrop-filter: blur(10px);
+            /* Сетка как у старого микрофона */
+            background-image: 
+                linear-gradient(45deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(-45deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+                radial-gradient(circle, rgba(255, 149, 0, 0.08) 1px, transparent 1px);
+            background-size: 8px 8px, 8px 8px, 6px 6px;
+            background-position: 0 0, 0 0, 3px 3px;
+        }
+
+        /* Верхнее свечение для объёма */
+        .audio-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 149, 0, 0.5), 
+                transparent
+            );
         }
 
         .play-btn {
@@ -535,6 +558,8 @@
             font-size: 1.2rem; cursor: pointer;
             font-family: var(--font-mono);
             transition: all 0.3s;
+            position: relative;
+            z-index: 1;
         }
 
         .play-btn:hover {
@@ -542,7 +567,7 @@
             transform: scale(1.1);
         }
 
-        .audio-info { flex: 1; font-family: var(--font-mono); font-size: 0.8rem; }
+        .audio-info { flex: 1; font-family: var(--font-mono); font-size: 0.8rem; position: relative; z-index: 1; }
         .audio-title { color: var(--accent-yellow); }
         .audio-status { color: var(--text-muted); font-size: 0.7rem; }
 
@@ -550,6 +575,8 @@
             color: var(--accent-cyan); font-family: var(--font-mono);
             font-size: 0.7rem; text-transform: uppercase;
             margin-right: 8px;
+            position: relative;
+            z-index: 1;
         }
 
         .voice-select {
@@ -559,6 +586,8 @@
             padding: 5px 10px;
             font-family: var(--font-mono); font-size: 0.75rem;
             cursor: pointer; max-width: 200px;
+            position: relative;
+            z-index: 1;
         }
 
         .chapter { display: none; }
@@ -592,14 +621,17 @@
             .voice-select { max-width: 120px; }
             
             .hud-radar {
-                bottom: 70px;
+                bottom: 80px;
                 right: 10px;
             }
             .radar {
-                width: 80px;
-                height: 80px;
+                width: 70px;
+                height: 70px;
             }
-            .radar-label { font-size: 0.5rem; }
+            .radar-label { 
+                font-size: 0.45rem;
+                padding: 1px 4px;
+            }
         }
     </style>
 </head>
