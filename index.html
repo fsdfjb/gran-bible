@@ -41,7 +41,6 @@
             background-size: 50px 50px;
         }
 
-        /* Scanlines */
         .scanlines {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
@@ -49,7 +48,6 @@
             pointer-events: none; z-index: 9999; opacity: 0.15;
         }
 
-        /* Эффект сканирования */
         .scan-line {
             position: fixed;
             top: 0;
@@ -68,7 +66,6 @@
             100% { top: 100vh; }
         }
 
-        /* Анимированные частицы на фоне */
         .particles {
             position: fixed;
             top: 0;
@@ -114,7 +111,6 @@
             overflow: hidden;
         }
 
-        /* Бегущий импульс по шапке */
         .header::before {
             content: '';
             position: absolute;
@@ -188,7 +184,6 @@
             position: relative;
         }
 
-        /* Мигающий индикатор на статусе */
         .status-badge::before {
             content: '';
             position: absolute;
@@ -207,9 +202,165 @@
             50% { opacity: 0.3; }
         }
 
+        /* === ПАНЕЛЬ КОМАНДНОГО ЦЕНТРА === */
+        .command-center {
+            position: fixed;
+            top: 75px;
+            left: 0;
+            right: 0;
+            height: 180px;
+            background: var(--bg-darker);
+            border-bottom: 2px solid var(--accent-orange);
+            z-index: 998;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        /* Звёздное небо на canvas */
+        #starfield {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Радар */
+        .radar-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            z-index: 1;
+        }
+
+        .radar {
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--accent-cyan);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+        }
+
+        /* Кольца радара */
+        .radar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 66%;
+            height: 66%;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 50%;
+        }
+
+        .radar::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 33%;
+            height: 33%;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 50%;
+        }
+
+        /* Вращающаяся линия сканирования */
+        .radar-sweep {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-cyan), transparent);
+            transform-origin: left center;
+            animation: radarRotate 3s linear infinite;
+        }
+
+        @keyframes radarRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Центр радара */
+        .radar-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px;
+            height: 6px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        /* Цели на радаре */
+        .radar-target {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-red);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-red);
+            animation: targetBlink 1s ease-in-out infinite;
+        }
+
+        .radar-target:nth-child(3) { top: 30%; left: 60%; animation-delay: 0s; }
+        .radar-target:nth-child(4) { top: 65%; left: 35%; animation-delay: 0.3s; }
+        .radar-target:nth-child(5) { top: 45%; left: 75%; animation-delay: 0.6s; }
+
+        @keyframes targetBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Данные радара */
+        .radar-data {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--accent-cyan);
+            white-space: nowrap;
+        }
+
+        /* Координаты рядом с радаром */
+        .coordinates {
+            position: relative;
+            z-index: 1;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: left;
+            line-height: 1.8;
+        }
+
+        .coordinates .label {
+            color: var(--text-muted);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+        }
+
+        .coordinates .value {
+            color: var(--accent-cyan);
+            font-size: 0.85rem;
+        }
+
         /* NAVIGATION TABS */
         .nav-tabs {
-            position: fixed; top: 85px; left: 0; right: 0;
+            position: fixed; top: 260px; left: 0; right: 0;
             background: var(--bg-panel);
             border-bottom: 1px solid var(--border-color);
             padding: 0 20px;
@@ -259,7 +410,7 @@
         /* MAIN CONTENT */
         .main-container {
             max-width: 1400px; margin: 0 auto;
-            padding: 170px 20px 100px;
+            padding: 340px 20px 100px;
         }
 
         .chapter-header {
@@ -495,8 +646,24 @@
             .header-stats { display: none; }
             .project-info h1 { font-size: 1.1rem; }
             .project-info .subtitle { font-size: 0.6rem; }
-            .nav-tabs { top: 110px; }
-            .main-container { padding: 190px 15px 100px; }
+            
+            .command-center {
+                top: 95px;
+                height: 150px;
+                gap: 20px;
+            }
+            
+            .radar-container {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .coordinates {
+                font-size: 0.65rem;
+            }
+            
+            .nav-tabs { top: 250px; }
+            .main-container { padding: 320px 15px 100px; }
             .chapter-title { font-size: 1.3rem; }
             .content-panel { padding: 20px; }
             .resource-grid { grid-template-columns: 1fr; }
@@ -509,7 +676,6 @@
     <div class="scanlines"></div>
     <div class="scan-line"></div>
     
-    <!-- Анимированные частицы -->
     <div class="particles">
         <div class="particle"></div>
         <div class="particle"></div>
@@ -545,6 +711,31 @@
             </div>
         </div>
     </header>
+
+    <!-- ПАНЕЛЬ КОМАНДНОГО ЦЕНТРА -->
+    <div class="command-center">
+        <canvas id="starfield"></canvas>
+        
+        <div class="radar-container">
+            <div class="radar">
+                <div class="radar-sweep"></div>
+                <div class="radar-center"></div>
+                <div class="radar-target"></div>
+                <div class="radar-target"></div>
+                <div class="radar-target"></div>
+            </div>
+            <div class="radar-data">СЕКТОР: ПЕРИФЕРИЯ</div>
+        </div>
+
+        <div class="coordinates">
+            <div><span class="label">КООРДИНАТЫ:</span></div>
+            <div class="value">X: 847.291 | Y: 203.456</div>
+            <div><span class="label">СКОРОСТЬ:</span></div>
+            <div class="value">0.00 C (СТОЯНКА)</div>
+            <div><span class="label">РЕАКТОР:</span></div>
+            <div class="value">98.7% НОРМА</div>
+        </div>
+    </div>
 
     <nav class="nav-tabs">
         <button class="nav-tab active" onclick="showChapter('intro')">01 ВВЕДЕНИЕ</button>
@@ -754,6 +945,52 @@
     </div>
 
     <script>
+        // === ЗВЁЗДНОЕ НЕБО НА CANVAS ===
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+        
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const stars = [];
+        const numStars = 100;
+
+        for (let i = 0; i < numStars; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 1.5,
+                opacity: Math.random(),
+                speed: Math.random() * 0.02 + 0.01
+            });
+        }
+
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            stars.forEach(star => {
+                star.opacity += star.speed;
+                if (star.opacity > 1 || star.opacity < 0) {
+                    star.speed = -star.speed;
+                }
+                
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(star.opacity)})`;
+                ctx.fill();
+            });
+            
+            requestAnimationFrame(animateStars);
+        }
+
+        animateStars();
+
+        // === НАВИГАЦИЯ ===
         function showChapter(id) {
             document.querySelectorAll('.chapter').forEach(c => c.classList.remove('active'));
             document.getElementById(id).classList.add('active');
@@ -837,7 +1074,7 @@
                 russianVoices.forEach((voice, index) => {
                     const option = document.createElement('option');
                     option.value = voices.indexOf(voice);
-                    option.text = '🇺 ' + voice.name + ' (' + voice.lang + ')';
+                    option.text = '🇷🇺 ' + voice.name + ' (' + voice.lang + ')';
                     select.appendChild(option);
                 });
                 const otherVoices = voices.filter(v => !v.lang.includes('ru'));
