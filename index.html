@@ -425,13 +425,14 @@
         /* === HUD РАДАР (фиксированный в углу) === */
         .hud-radar {
             position: fixed;
-            bottom: 90px;
+            bottom: 100px;
             right: 15px;
-            z-index: 998;
+            z-index: 999;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 8px;
+            pointer-events: none;
         }
 
         .radar {
@@ -515,9 +516,10 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             text-align: center;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 2px 6px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 3px 8px;
             border-radius: 3px;
+            border: 1px solid rgba(0, 217, 255, 0.3);
         }
 
         /* === АУДИО ПАНЕЛЬ С СЕТКОЙ МИКРОФОНА === */
@@ -549,6 +551,7 @@
                 rgba(255, 149, 0, 0.5), 
                 transparent
             );
+            pointer-events: none;
         }
 
         .play-btn {
@@ -613,24 +616,38 @@
             .project-info h1 { font-size: 1.1rem; }
             .project-info .subtitle { font-size: 0.6rem; }
             .nav-tabs { top: 95px; }
-            .main-container { padding: 170px 15px 100px; }
+            .main-container { 
+                padding: 170px 15px 140px; /* Увеличен нижний отступ для радара */
+            }
             .chapter-title { font-size: 1.3rem; }
             .content-panel { padding: 20px; }
             .resource-grid { grid-template-columns: 1fr; }
-            .audio-panel { flex-wrap: wrap; padding: 10px; }
+            .audio-panel { 
+                flex-wrap: wrap; 
+                padding: 10px;
+                gap: 8px;
+            }
             .voice-select { max-width: 120px; }
             
+            /* Радар поднят выше и уменьшен */
             .hud-radar {
-                bottom: 80px;
+                bottom: 110px;
                 right: 10px;
             }
             .radar {
-                width: 70px;
-                height: 70px;
+                width: 65px;
+                height: 65px;
+            }
+            .radar-center {
+                width: 4px; height: 4px;
+            }
+            .radar-target {
+                width: 2px; height: 2px;
             }
             .radar-label { 
                 font-size: 0.45rem;
-                padding: 1px 4px;
+                padding: 2px 5px;
+                letter-spacing: 1px;
             }
         }
     </style>
@@ -1031,7 +1048,7 @@
                 russianVoices.forEach((voice, index) => {
                     const option = document.createElement('option');
                     option.value = voices.indexOf(voice);
-                    option.text = '🇷🇺 ' + voice.name + ' (' + voice.lang + ')';
+                    option.text = '🇺 ' + voice.name + ' (' + voice.lang + ')';
                     select.appendChild(option);
                 });
                 const otherVoices = voices.filter(v => !v.lang.includes('ru'));
