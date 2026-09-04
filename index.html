@@ -48,13 +48,41 @@
             pointer-events: none; z-index: 9999; opacity: 0.15;
         }
 
+        /* === ОГРАДИТЕЛЬНАЯ ЛЕНТА (чёрно-оранжевые полосы) === */
+        .hazard-stripe {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--accent-orange) 0px,
+                var(--accent-orange) 8px,
+                #000 8px,
+                #000 16px
+            );
+        }
+
         .header {
             background: var(--bg-darker);
-            border-bottom: 2px solid var(--accent-orange);
+            border-bottom: 4px solid transparent;
             padding: 15px 20px;
             position: fixed; top: 0; left: 0; right: 0;
             z-index: 1000;
             display: flex; justify-content: space-between; align-items: center;
+        }
+
+        /* Оградительная лента под шапкой */
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--accent-orange) 0px,
+                var(--accent-orange) 6px,
+                #000 6px,
+                #000 12px
+            );
         }
 
         .header-left { display: flex; align-items: center; gap: 15px; }
@@ -65,16 +93,19 @@
             background: rgba(255, 149, 0, 0.1);
             display: flex; align-items: center; justify-content: center;
             font-family: var(--font-mono); font-size: 1.5rem; color: var(--accent-orange);
+            flex-shrink: 0;
         }
 
         .project-info h1 {
-            font-family: var(--font-mono); font-size: 1.5rem; color: var(--text-primary);
+            font-family: var(--font-mono); font-size: 1.4rem; color: var(--text-primary);
             letter-spacing: 3px; text-transform: uppercase;
+            margin: 0;
         }
 
         .project-info .subtitle {
-            font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-secondary);
+            font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-secondary);
             letter-spacing: 2px;
+            margin-top: 2px;
         }
 
         .header-stats {
@@ -104,7 +135,9 @@
         }
 
         .nav-tabs {
-            position: fixed; top: 70px; left: 0; right: 0;
+            position: fixed; 
+            top: 85px; /* Увеличен отступ от шапки */
+            left: 0; right: 0;
             background: var(--bg-panel);
             border-bottom: 1px solid var(--border-color);
             padding: 0 20px;
@@ -125,9 +158,21 @@
             position: relative;
         }
 
+        /* Оградительная полоса на активной вкладке */
         .nav-tab::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-            background: var(--accent-orange); transform: scaleX(0); transition: transform 0.3s;
+            content: ''; 
+            position: absolute; 
+            top: 0; left: 0; right: 0; 
+            height: 3px;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--accent-orange) 0px,
+                var(--accent-orange) 4px,
+                #000 4px,
+                #000 8px
+            );
+            transform: scaleX(0); 
+            transition: transform 0.3s;
         }
 
         .nav-tab:hover { color: var(--accent-orange); border-color: var(--accent-orange); }
@@ -140,38 +185,61 @@
 
         .main-container {
             max-width: 1400px; margin: 0 auto;
-            padding: 140px 20px 100px;
+            padding: 170px 20px 100px; /* Увеличен отступ сверху */
         }
 
         .chapter-header {
             background: var(--bg-panel);
             border: 1px solid var(--border-color);
-            border-left: 4px solid var(--accent-orange);
+            border-left: 6px solid transparent;
             padding: 30px;
             margin-bottom: 30px;
             position: relative;
         }
 
+        /* Оградительная лента слева от заголовка главы */
         .chapter-header::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            content: ''; 
+            position: absolute; 
+            top: 0; left: 0; 
+            width: 6px;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--accent-orange) 0px,
+                var(--accent-orange) 6px,
+                #000 6px,
+                #000 12px
+            );
+        }
+
+        .chapter-header::after {
+            content: ''; 
+            position: absolute; 
+            top: 0; left: 0; right: 0; bottom: 0;
             background: repeating-linear-gradient(
                 0deg,
                 rgba(255, 149, 0, 0.03),
                 rgba(255, 149, 0, 0.03) 1px,
                 transparent 1px,
                 transparent 2px
-            ); pointer-events: none;
+            ); 
+            pointer-events: none;
         }
 
         .chapter-number {
             font-family: var(--font-mono); color: var(--accent-orange);
             font-size: 0.9rem; letter-spacing: 3px; margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
         }
 
         .chapter-title {
             font-family: var(--font-mono); font-size: 2rem;
             color: var(--text-primary); text-transform: uppercase;
             letter-spacing: 5px;
+            position: relative;
+            z-index: 1;
         }
 
         .content-panel {
@@ -227,20 +295,34 @@
         .resource-card {
             background: var(--bg-darker);
             border: 1px solid var(--border-color);
-            border-left: 3px solid var(--accent-orange);
+            border-left: 4px solid transparent;
             padding: 20px;
             position: relative;
             transition: all 0.3s;
+        }
+
+        /* Оградительная лента на карточках ресурсов */
+        .resource-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            width: 4px;
+        }
+
+        .resource-card.common::before {
+            background: repeating-linear-gradient(45deg, var(--text-muted) 0px, var(--text-muted) 4px, #000 4px, #000 8px);
+        }
+        .resource-card.rare::before {
+            background: repeating-linear-gradient(45deg, var(--accent-cyan) 0px, var(--accent-cyan) 4px, #000 4px, #000 8px);
+        }
+        .resource-card.legendary::before {
+            background: repeating-linear-gradient(45deg, var(--accent-yellow) 0px, var(--accent-yellow) 4px, #000 4px, #000 8px);
         }
 
         .resource-card:hover {
             border-color: var(--accent-orange);
             box-shadow: 0 0 20px rgba(255, 149, 0, 0.2);
         }
-
-        .resource-card.common { border-left-color: var(--text-muted); }
-        .resource-card.rare { border-left-color: var(--accent-cyan); }
-        .resource-card.legendary { border-left-color: var(--accent-yellow); }
 
         .resource-name {
             font-family: var(--font-mono); color: var(--text-primary);
@@ -260,21 +342,62 @@
         .warning-box {
             background: rgba(255, 51, 51, 0.05);
             border: 1px solid var(--accent-red);
-            border-left: 4px solid var(--accent-red);
+            border-left: 6px solid transparent;
             padding: 20px; margin: 20px 0;
             font-family: var(--font-mono); font-size: 0.85rem;
             color: var(--accent-red);
+            position: relative;
         }
 
+        /* Оградительная лента на предупреждениях */
         .warning-box::before {
-            content: ' ВНИМАНИЕ: '; font-weight: bold;
+            content: '';
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            width: 6px;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--accent-red) 0px,
+                var(--accent-red) 6px,
+                #000 6px,
+                #000 12px
+            );
+        }
+
+        .warning-box .warning-text {
+            margin-left: 15px;
+            font-weight: bold;
+        }
+
+        .warning-box .warning-text::before {
+            content: '⚠ ВНИМАНИЕ: ';
         }
 
         .quote-block {
             background: var(--bg-darker);
-            border-left: 4px solid var(--accent-cyan);
+            border-left: 4px solid transparent;
             padding: 20px; margin: 20px 0;
             font-style: italic; color: var(--text-secondary);
+            position: relative;
+        }
+
+        /* Оградительная лента на цитатах */
+        .quote-block::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            width: 4px;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--accent-cyan) 0px,
+                var(--accent-cyan) 4px,
+                #000 4px,
+                #000 8px
+            );
+        }
+
+        .quote-block p {
+            margin-left: 10px;
         }
 
         .quote-author {
@@ -286,10 +409,27 @@
         .audio-panel {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: var(--bg-darker);
-            border-top: 2px solid var(--accent-orange);
+            border-top: 4px solid transparent;
             padding: 15px 20px;
             z-index: 1000;
             display: flex; align-items: center; gap: 15px;
+        }
+
+        /* Оградительная лента сверху аудио-панели */
+        .audio-panel::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--accent-orange) 0px,
+                var(--accent-orange) 6px,
+                #000 6px,
+                #000 12px
+            );
         }
 
         .play-btn {
@@ -328,10 +468,21 @@
         }
 
         @media (max-width: 768px) {
-            .header { flex-direction: column; gap: 10px; padding: 10px; }
+            .header { 
+                flex-direction: column; 
+                gap: 8px; 
+                padding: 10px;
+                align-items: flex-start;
+            }
             .header-stats { display: none; }
-            .nav-tabs { top: 90px; }
-            .main-container { padding: 180px 15px 100px; }
+            .project-info h1 { font-size: 1.1rem; }
+            .project-info .subtitle { font-size: 0.6rem; }
+            .nav-tabs { 
+                top: 110px; /* Увеличен для мобильной шапки */
+            }
+            .main-container { 
+                padding: 190px 15px 100px; /* Увеличен отступ */
+            }
             .chapter-title { font-size: 1.3rem; }
             .content-panel { padding: 20px; }
             .resource-grid { grid-template-columns: 1fr; }
@@ -394,12 +545,12 @@
                 <p><span class="highlight">ГРАНЬ</span> — это не просто регион космоса. Это последняя граница между цивилизацией и хаосом. Здесь, на самом краю известного пространства, заканчиваются законы центральных миров и начинаются правила выживания.</p>
 
                 <div class="quote-block">
-                    Здесь не спрашивают, откуда ты. Спрашивают, сколько у тебя в трюме и не течёт ли реактор.
+                    <p>Здесь не спрашивают, откуда ты. Спрашивают, сколько у тебя в трюме и не течёт ли реактор.</p>
                     <div class="quote-author">— Капитан Рен, 2147 год</div>
                 </div>
 
                 <div class="warning-box">
-                    Несанкционированное распространение данных карается конфискацией корабля и аннулированием лицензии капитана.
+                    <div class="warning-text">Несанкционированное распространение данных карается конфискацией корабля и аннулированием лицензии капитана.</div>
                 </div>
             </div>
         </div>
@@ -554,7 +705,7 @@
                 <strong>Нижние уровни («Дно»):</strong> Чёрный рынок, нелегальные доки.</p>
 
                 <div class="warning-box">
-                    В Поясе «Шёпот» зафиксированы фантомные сигналы. Не доверяйте приборам. Доверяйте глазам.
+                    <div class="warning-text">В Поясе «Шёпот» зафиксированы фантомные сигналы. Не доверяйте приборам. Доверяйте глазам.</div>
                 </div>
 
                 <h3>Пояс «Шёпот»</h3>
