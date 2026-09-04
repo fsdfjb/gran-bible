@@ -3,269 +3,573 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#0a0a0f">
+    <meta name="theme-color" content="#0a0e1a">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>ГРАНЬ | Космическая Библия</title>
+    <title>ГРАНЬ | ODYSSEY · АРХИТЕКТУРНЫЙ ЧЕРТЁЖ v2.0</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="https://via.placeholder.com/192/d4af37/000000?text=ГРАНЬ">
     <style>
         :root {
+            --bg-dark: #0a0e1a;
+            --bg-panel: #111827;
+            --bg-darker: #080c14;
+            --accent-orange: #ff9500;
+            --accent-yellow: #ffb347;
+            --accent-cyan: #00d9ff;
+            --accent-green: #00ff88;
+            --accent-red: #ff3333;
+            --text-primary: #e0e0e0;
+            --text-secondary: #8892b0;
+            --text-muted: #556080;
+            --border-color: #1e293b;
+            --font-mono: 'Consolas', 'Courier New', monospace;
             --font-ui: 'Segoe UI', Roboto, sans-serif;
-            --font-tech: 'Consolas', 'Courier New', monospace;
-            --rust: #b7410e; --neon-cyan: #00d9ff; --amber: #ffb347;
-            --void-black: #0a0a0f; --aged-gold: #d4af37; --alert-red: #ff3333;
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--void-black); color: #e0e0e0; font-family: var(--font-ui); overflow-x: hidden; line-height: 1.6; }
-        .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2)); background-size: 100% 4px; pointer-events: none; z-index: 9999; opacity: 0.15; }
-        .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(1px 1px at 20px 30px, #fff, transparent), radial-gradient(2px 2px at 50px 160px, var(--neon-cyan), transparent); background-repeat: repeat; background-size: 200px 200px; opacity: 0.3; z-index: -2; }
         
-        .game-hud { position: fixed; top: 0; left: 0; right: 0; background: rgba(10, 10, 15, 0.95); border-bottom: 2px solid var(--neon-cyan); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; backdrop-filter: blur(10px); }
-        .hud-logo { font-family: var(--font-tech); font-size: 1.5rem; font-weight: bold; color: var(--aged-gold); letter-spacing: 3px; text-shadow: 0 0 10px rgba(212,175,55,0.5); }
-        .hud-stats { display: flex; gap: 15px; }
-        .stat-box { background: rgba(0, 217, 255, 0.1); border: 1px solid var(--neon-cyan); padding: 5px 10px; border-radius: 3px; font-family: var(--font-tech); font-size: 0.8rem; min-width: 90px; text-align: center; }
-        .stat-label { color: var(--neon-cyan); font-size: 0.6rem; text-transform: uppercase; }
-        .stat-value { color: #fff; font-weight: bold; }
-        .currency-display { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--aged-gold); padding: 5px 15px; border-radius: 3px; text-align: right; }
-        .currency-value { font-family: var(--font-tech); color: var(--aged-gold); font-weight: bold; }
+        body { 
+            background: var(--bg-dark); 
+            color: var(--text-primary); 
+            font-family: var(--font-ui);
+            overflow-x: hidden;
+            line-height: 1.6;
+            background-image: 
+                linear-gradient(rgba(255, 149, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 149, 0, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
 
-        .game-container { max-width: 1200px; margin: 0 auto; padding: 80px 20px 100px; }
-        .game-nav { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; position: sticky; top: 60px; z-index: 100; background: rgba(10,10,15,0.9); padding: 15px; border: 1px solid var(--neon-cyan); border-radius: 5px; backdrop-filter: blur(10px); }
-        .nav-btn { background: rgba(0,0,0,0.5); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 10px 15px; font-family: var(--font-tech); font-size: 0.85rem; cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
-        .nav-btn:hover, .nav-btn.active { background: var(--neon-cyan); color: var(--void-black); box-shadow: 0 0 15px rgba(0,217,255,0.5); }
+        /* Scanlines */
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+            background-size: 100% 3px;
+            pointer-events: none; z-index: 9999; opacity: 0.15;
+        }
 
-        .audio-player { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10,10,15,0.95); border-top: 2px solid var(--aged-gold); padding: 10px 20px; display: flex; align-items: center; gap: 15px; z-index: 1000; backdrop-filter: blur(10px); }
-        .play-btn { background: var(--aged-gold); border: none; color: var(--void-black); width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .audio-info { flex: 1; font-family: var(--font-tech); font-size: 0.85rem; color: var(--amber); }
-        .voice-label { color: var(--neon-cyan); font-family: var(--font-tech); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-right: 8px; }
-        .voice-select { background: rgba(0,0,0,0.5); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 5px 8px; border-radius: 3px; font-family: var(--font-tech); font-size: 0.75rem; cursor: pointer; max-width: 180px; }
+        /* HEADER */
+        .header {
+            background: var(--bg-darker);
+            border-bottom: 2px solid var(--accent-orange);
+            padding: 15px 20px;
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+        }
 
-        .chapter { display: none; animation: fadeIn 0.5s ease; }
-        .chapter.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .chapter-header { text-align: center; margin-bottom: 30px; padding: 20px; border-bottom: 2px solid var(--aged-gold); }
-        .chapter-number { font-family: var(--font-tech); color: var(--rust); letter-spacing: 3px; font-size: 0.9rem; }
-        .chapter-title { font-size: 2.5rem; color: var(--aged-gold); text-transform: uppercase; letter-spacing: 5px; margin-top: 10px;}
-        .chapter-content { background: rgba(0,0,0,0.4); border-left: 3px solid var(--aged-gold); padding: 25px; margin-bottom: 20px; }
-        .chapter-content h3 { color: var(--neon-cyan); font-size: 1.4rem; margin: 20px 0 10px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(0,217,255,0.3); padding-bottom: 5px;}
-        .chapter-content p { margin-bottom: 15px; text-align: justify; }
-        .highlight { color: var(--amber); font-weight: bold; }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        
+        .logo {
+            width: 40px; height: 40px;
+            border: 2px solid var(--accent-orange);
+            background: rgba(255, 149, 0, 0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-mono); font-size: 1.5rem; color: var(--accent-orange);
+        }
 
-        .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin: 20px 0; }
-        .resource-card { background: rgba(26,26,46,0.6); border: 1px solid var(--aged-gold); padding: 15px; border-radius: 5px; transition: transform 0.2s; }
-        .resource-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(212,175,55,0.2); }
-        .resource-name { font-family: var(--font-tech); color: var(--aged-gold); font-size: 1.2rem; margin-bottom: 5px;}
-        .resource-slang { color: var(--neon-cyan); font-style: italic; font-size: 0.9rem; margin-bottom: 10px;}
+        .project-info h1 {
+            font-family: var(--font-mono); font-size: 1.5rem; color: var(--text-primary);
+            letter-spacing: 3px; text-transform: uppercase;
+        }
 
-        .game-table { width: 100%; border-collapse: collapse; margin: 20px 0; background: rgba(0,0,0,0.3); }
-        .game-table th, .game-table td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,217,255,0.2); }
-        .game-table th { color: var(--neon-cyan); font-family: var(--font-tech); text-transform: uppercase; font-size: 0.85rem; background: rgba(0,217,255,0.1); }
+        .project-info .subtitle {
+            font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-secondary);
+            letter-spacing: 2px;
+        }
 
-        .warning-box { background: rgba(255,51,51,0.1); border: 1px solid var(--alert-red); border-left: 4px solid var(--alert-red); padding: 15px; margin: 20px 0; color: #ffcccc; }
-        .warning-box::before { content: '⚠ ВНИМАНИЕ: '; color: var(--alert-red); font-weight: bold; font-family: var(--font-tech); }
-        .quote-block { background: rgba(0,217,255,0.05); border-left: 4px solid var(--neon-cyan); padding: 20px; margin: 20px 0; font-style: italic; }
-        .quote-author { text-align: right; color: var(--aged-gold); margin-top: 10px; font-style: normal; font-size: 0.9rem;}
+        .header-stats {
+            display: flex; gap: 20px;
+            font-family: var(--font-mono); font-size: 0.85rem;
+        }
 
+        .stat-item {
+            display: flex; flex-direction: column; gap: 3px;
+        }
+
+        .stat-label {
+            color: var(--text-muted); font-size: 0.65rem; text-transform: uppercase;
+        }
+
+        .stat-value {
+            color: var(--accent-orange); font-weight: bold; font-size: 0.95rem;
+        }
+
+        .status-badge {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 5px 15px;
+            font-family: var(--font-mono); font-size: 0.7rem;
+            letter-spacing: 2px; text-transform: uppercase;
+        }
+
+        /* NAVIGATION TABS */
+        .nav-tabs {
+            position: fixed; top: 70px; left: 0; right: 0;
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 20px;
+            z-index: 999;
+            display: flex; gap: 5px;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            color: var(--text-secondary);
+            padding: 12px 20px;
+            font-family: var(--font-mono); font-size: 0.75rem;
+            cursor: pointer; transition: all 0.3s;
+            text-transform: uppercase; letter-spacing: 2px;
+            position: relative;
+        }
+
+        .nav-tab::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: var(--accent-orange); transform: scaleX(0); transition: transform 0.3s;
+        }
+
+        .nav-tab:hover { color: var(--accent-orange); border-color: var(--accent-orange); }
+        .nav-tab.active {
+            color: var(--accent-orange);
+            background: rgba(255, 149, 0, 0.05);
+            border-color: var(--accent-orange);
+        }
+        .nav-tab.active::before { transform: scaleX(1); }
+
+        /* MAIN CONTENT */
+        .main-container {
+            max-width: 1400px; margin: 0 auto;
+            padding: 140px 20px 100px;
+        }
+
+        /* CHAPTER HEADER */
+        .chapter-header {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-orange);
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .chapter-header::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(255, 149, 0, 0.03),
+                rgba(255, 149, 0, 0.03) 1px,
+                transparent 1px,
+                transparent 2px
+            ); pointer-events: none;
+        }
+
+        .chapter-number {
+            font-family: var(--font-mono); color: var(--accent-orange);
+            font-size: 0.9rem; letter-spacing: 3px; margin-bottom: 10px;
+        }
+
+        .chapter-title {
+            font-family: var(--font-mono); font-size: 2rem;
+            color: var(--text-primary); text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+
+        /* CONTENT PANEL */
+        .content-panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .content-panel h3 {
+            font-family: var(--font-mono); color: var(--accent-cyan);
+            font-size: 1.1rem; margin: 25px 0 15px;
+            text-transform: uppercase; letter-spacing: 2px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .content-panel p {
+            margin-bottom: 15px; text-align: justify;
+            color: var(--text-secondary);
+        }
+
+        .highlight {
+            color: var(--accent-yellow); font-weight: bold;
+        }
+
+        /* TABLES */
+        .tech-table {
+            width: 100%; border-collapse: collapse;
+            margin: 20px 0;
+            font-family: var(--font-mono); font-size: 0.85rem;
+        }
+
+        .tech-table th, .tech-table td {
+            padding: 12px; text-align: left;
+            border: 1px solid var(--border-color);
+        }
+
+        .tech-table th {
+            background: rgba(255, 149, 0, 0.1);
+            color: var(--accent-orange);
+            text-transform: uppercase; letter-spacing: 1px;
+            font-size: 0.75rem;
+        }
+
+        .tech-table tr:hover { background: rgba(255, 149, 0, 0.05); }
+
+        /* RESOURCE CARDS */
+        .resource-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px; margin: 20px 0;
+        }
+
+        .resource-card {
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-orange);
+            padding: 20px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .resource-card:hover {
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 20px rgba(255, 149, 0, 0.2);
+        }
+
+        .resource-card.common { border-left-color: var(--text-muted); }
+        .resource-card.rare { border-left-color: var(--accent-cyan); }
+        .resource-card.legendary { border-left-color: var(--accent-yellow); }
+
+        .resource-name {
+            font-family: var(--font-mono); color: var(--text-primary);
+            font-size: 1.1rem; margin-bottom: 5px;
+        }
+
+        .resource-slang {
+            color: var(--accent-orange); font-style: italic;
+            font-family: var(--font-mono); font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        .resource-desc {
+            color: var(--text-secondary); font-size: 0.9rem;
+        }
+
+        /* WARNING BOX */
+        .warning-box {
+            background: rgba(255, 51, 51, 0.05);
+            border: 1px solid var(--accent-red);
+            border-left: 4px solid var(--accent-red);
+            padding: 20px; margin: 20px 0;
+            font-family: var(--font-mono); font-size: 0.85rem;
+            color: var(--accent-red);
+        }
+
+        .warning-box::before {
+            content: '⚠ ВНИМАНИЕ: '; font-weight: bold;
+        }
+
+        /* QUOTE BLOCK */
+        .quote-block {
+            background: var(--bg-darker);
+            border-left: 4px solid var(--accent-cyan);
+            padding: 20px; margin: 20px 0;
+            font-style: italic; color: var(--text-secondary);
+        }
+
+        .quote-author {
+            text-align: right; color: var(--accent-orange);
+            font-style: normal; font-size: 0.85rem;
+            margin-top: 10px; font-family: var(--font-mono);
+        }
+
+        /* AUDIO PLAYER */
+        .audio-panel {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--bg-darker);
+            border-top: 2px solid var(--accent-orange);
+            padding: 15px 20px;
+            z-index: 1000;
+            display: flex; align-items: center; gap: 15px;
+        }
+
+        .play-btn {
+            background: var(--accent-orange);
+            border: none; color: var(--bg-dark);
+            width: 40px; height: 40px;
+            font-size: 1.2rem; cursor: pointer;
+            font-family: var(--font-mono);
+        }
+
+        .audio-info { flex: 1; font-family: var(--font-mono); font-size: 0.8rem; }
+        .audio-title { color: var(--accent-yellow); }
+        .audio-status { color: var(--text-muted); font-size: 0.7rem; }
+
+        .voice-label {
+            color: var(--accent-cyan); font-family: var(--font-mono);
+            font-size: 0.7rem; text-transform: uppercase;
+            margin-right: 8px;
+        }
+
+        .voice-select {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            color: var(--accent-cyan);
+            padding: 5px 10px;
+            font-family: var(--font-mono); font-size: 0.75rem;
+            cursor: pointer; max-width: 200px;
+        }
+
+        /* CHAPTER VISIBILITY */
+        .chapter { display: none; }
+        .chapter.active { display: block; animation: fadeIn 0.5s; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* MOBILE */
         @media (max-width: 768px) {
-            .game-hud { 
-                flex-direction: row; 
-                gap: 5px; 
-                padding: 6px 10px;
-                position: fixed;
-                top: 0;
-                height: auto;
-                min-height: 50px;
-                flex-wrap: wrap;
-            }
-            .hud-logo { 
-                font-size: 0.9rem;
-                flex: 0 0 auto;
-                min-width: 55px;
-            }
-            .hud-stats { 
-                display: flex;
-                gap: 4px;
-            }
-            .stat-box {
-                padding: 3px 5px;
-                font-size: 0.6rem;
-                min-width: 65px;
-            }
-            .stat-label {
-                font-size: 0.45rem;
-            }
-            .stat-value {
-                font-size: 0.65rem;
-            }
-            .currency-display {
-                padding: 3px 6px;
-                font-size: 0.65rem;
-            }
-            .currency-value {
-                font-size: 0.8rem;
-            }
-            .game-container { 
-                padding: 120px 10px 85px;
-            }
-            .chapter-title { 
-                font-size: 1.3rem; 
-                letter-spacing: 2px;
-            }
-            .game-nav { 
-                top: 60px;
-                padding: 8px;
-                gap: 5px;
-            }
-            .nav-btn {
-                padding: 6px 8px;
-                font-size: 0.65rem;
-                flex: 1 1 calc(50% - 5px);
-                min-width: 0;
-                text-align: center;
-            }
-            .audio-player {
-                padding: 8px 10px;
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-            .play-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 0.9rem;
-            }
-            .audio-info {
-                font-size: 0.7rem;
-                order: 3;
-                width: 100%;
-                margin-top: 5px;
-            }
-            .voice-label {
-                font-size: 0.65rem;
-            }
-            .voice-select {
-                font-size: 0.65rem;
-                max-width: 140px;
-                padding: 4px 6px;
-            }
-            .chapter-content {
-                padding: 12px;
-            }
-            .chapter-content h3 {
-                font-size: 1rem;
-            }
+            .header { flex-direction: column; gap: 10px; padding: 10px; }
+            .header-stats { display: none; }
+            .nav-tabs { top: 90px; }
+            .main-container { padding: 180px 15px 100px; }
+            .chapter-title { font-size: 1.3rem; }
+            .content-panel { padding: 20px; }
+            .resource-grid { grid-template-columns: 1fr; }
+            .audio-panel { flex-wrap: wrap; padding: 10px; }
+            .voice-select { max-width: 120px; }
         }
     </style>
 </head>
 <body>
     <div class="scanlines"></div>
-    <div class="stars"></div>
 
-    <header class="game-hud">
-        <div class="hud-logo">ГРАНЬ</div>
-        <div class="hud-stats">
-            <div class="stat-box"><div class="stat-label">Статус</div><div class="stat-value">СТАЖЁР</div></div>
-            <div class="stat-box"><div class="stat-label">Сектор</div><div class="stat-value">ПЕРИФЕРИЯ</div></div>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">⚡</div>
+            <div class="project-info">
+                <h1>ГРАНЬ</h1>
+                <div class="subtitle">ODYSSEY · АРХИТЕКТУРНЫЙ ЧЕРТЁЖ v2.0</div>
+            </div>
         </div>
-        <div class="currency-display"><div class="stat-label">Баланс</div><div class="currency-value">0 ☉ ГЛН</div></div>
+        <div class="header-stats">
+            <div class="stat-item">
+                <div class="stat-label">ГЛАВ</div>
+                <div class="stat-value">7</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">СТРАНИЦ</div>
+                <div class="stat-value">42</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">СЛОВ</div>
+                <div class="stat-value">15K</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">СТАТУС</div>
+                <div class="status-badge">ПРИНЯТО В РАБОТУ</div>
+            </div>
+        </div>
     </header>
 
-    <div class="game-container">
-        <nav class="game-nav">
-            <button class="nav-btn active" onclick="showChapter('intro')">01. Введение</button>
-            <button class="nav-btn" onclick="showChapter('history')">02. История</button>
-            <button class="nav-btn" onclick="showChapter('economy')">03. Экономика</button>
-            <button class="nav-btn" onclick="showChapter('resources')">04. Ресурсы</button>
-            <button class="nav-btn" onclick="showChapter('factions')">05. Фракции</button>
-            <button class="nav-btn" onclick="showChapter('slang')">06. Сленг</button>
-            <button class="nav-btn" onclick="showChapter('locations')">07. Локации</button>
-        </nav>
+    <!-- NAVIGATION TABS -->
+    <nav class="nav-tabs">
+        <button class="nav-tab active" onclick="showChapter('intro')">01 ВВЕДЕНИЕ</button>
+        <button class="nav-tab" onclick="showChapter('history')">02 ИСТОРИЯ</button>
+        <button class="nav-tab" onclick="showChapter('economy')">03 ЭКОНОМИКА</button>
+        <button class="nav-tab" onclick="showChapter('resources')">04 РЕСУРСЫ</button>
+        <button class="nav-tab" onclick="showChapter('factions')">05 ФРАКЦИИ</button>
+        <button class="nav-tab" onclick="showChapter('slang')">06 СЛЕНГ</button>
+        <button class="nav-tab" onclick="showChapter('locations')">07 ЛОКАЦИИ</button>
+    </nav>
 
+    <div class="main-container">
+        <!-- CHAPTER: INTRO -->
         <div id="intro" class="chapter active">
-            <div class="chapter-header"><div class="chapter-number">МОДУЛЬ 01</div><h2 class="chapter-title">Добро пожаловать на Грань</h2></div>
-            <div class="chapter-content">
+            <div class="chapter-header">
+                <div class="chapter-number">02 / ЦЕЛЕВАЯ СТРУКТУРА</div>
+                <h2 class="chapter-title">ДОБРО ПОЖАЛОВАТЬ НА ГРАНЬ</h2>
+            </div>
+            
+            <div class="content-panel">
                 <p><span class="highlight">СИСТЕМНОЕ СООБЩЕНИЕ:</span> Вы получили доступ к зашифрованному архиву данных о пограничных территориях галактики. Эта информация предназначена только для сертифицированных капитанов.</p>
+                
                 <p><span class="highlight">ГРАНЬ</span> — это не просто регион космоса. Это последняя граница между цивилизацией и хаосом. Здесь, на самом краю известного пространства, заканчиваются законы центральных миров и начинаются правила выживания.</p>
-                <div class="quote-block">Здесь не спрашивают, откуда ты. Спрашивают, сколько у тебя в трюме и не течёт ли реактор.<div class="quote-author">— Капитан Рен, 2147 год</div></div>
-            </div>
-        </div>
 
-        <div id="history" class="chapter">
-            <div class="chapter-header"><div class="chapter-number">МОДУЛЬ 02</div><h2 class="chapter-title">Хроники Освоения</h2></div>
-            <div class="chapter-content">
-                <h3>Эпоха Великого Сжатия</h3>
-                <p>Всё началось три столетия назад, когда центральные миры галактики закрыли свои границы. <span class="highlight">«Великое Сжатие»</span> — так историки назвали период изоляции богатых планет от внешних территорий.</p>
-                <p>Логистические компании, оказавшиеся запертыми на периферии, объединились в <span class="highlight">Консорциум «Меридиан»</span>. Они не завоевали эти земли силой — они купили их, одну станцию за другой.</p>
-            </div>
-        </div>
+                <div class="quote-block">
+                    Здесь не спрашивают, откуда ты. Спрашивают, сколько у тебя в трюме и не течёт ли реактор.
+                    <div class="quote-author">— Капитан Рен, 2147 год</div>
+                </div>
 
-        <div id="economy" class="chapter">
-            <div class="chapter-header"><div class="chapter-number">МОДУЛЬ 03</div><h2 class="chapter-title">Экономическая Система</h2></div>
-            <div class="chapter-content">
-                <p>На Грани нет золота. Есть только <span class="highlight">энергия</span> — единственная валюта, которая имеет значение.</p>
-                <table class="game-table">
-                    <thead><tr><th>Валюта</th><th>Обозначение</th><th>Обеспечение</th></tr></thead>
-                    <tbody><tr><td><strong>Гелион</strong></td><td>ГЛН ☉</td><td>1 мегаватт-час энергии</td></tr><tr><td><strong>Эон</strong></td><td>30 дней</td><td>Доступ к глубокому космосу</td></tr></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="resources" class="chapter">
-            <div class="chapter-header"><div class="chapter-number">МОДУЛЬ 04</div><h2 class="chapter-title">Минеральные Ресурсы</h2></div>
-            <div class="chapter-content">
-                <p>Семь ключевых минералов определяют экономику Грани.</p>
-                <div class="resource-grid">
-                    <div class="resource-card"><div class="resource-name">Феррит</div><div class="resource-slang">«Ржавка»</div><p>Базовый металл. Из него варят корпуса кораблей и мечты новичков.</p></div>
-                    <div class="resource-card"><div class="resource-name">Аурит</div><div class="resource-slang">«Заря»</div><p>Золотистый, радиоактивный. Тот, кто нашёл жилу аурита, либо богач, либо мертвец.</p></div>
-                    <div class="resource-card"><div class="resource-name">Эфирит</div><div class="resource-slang">«Дыхание»</div><p>Легендарная руда глубин. Те, кто его добывал, редко возвращаются рассказать.</p></div>
+                <div class="warning-box">
+                    Несанкционированное распространение данных карается конфискацией корабля и аннулированием лицензии капитана.
                 </div>
             </div>
         </div>
 
-        <div id="factions" class="chapter">
-            <div class="chapter-header"><div class="chapter-number">МОДУЛЬ 05</div><h2 class="chapter-title">Фракции Грани</h2></div>
-            <div class="chapter-content">
-                <h3>Консорциум «Меридиан»</h3>
-                <p>Торговая сверхструктура. Не воюет — покупает. Не угрожает — выставляет счёт. Их девиз: «Порядок — это прибыльность».</p>
-                <h3>Синдикат «Глубина»</h3>
-                <p>Союз шахтёров. Грубые, спаянные, упрямые. Их закон: «Не бросай своего в открытом космосе».</p>
-                <h3>«Стервятники»</h3>
-                <p>Пираты и рейдеры. Без флага, без кодекса, без жалости. На Грани говорят: «Если ты видишь Стервятника — ты уже опоздал».</p>
+        <!-- CHAPTER: HISTORY -->
+        <div id="history" class="chapter">
+            <div class="chapter-header">
+                <div class="chapter-number">02 / ХРОНИКИ ОСВОЕНИЯ</div>
+                <h2 class="chapter-title">ЭПОХА ВЕЛИКОГО СЖАТИЯ</h2>
+            </div>
+            <div class="content-panel">
+                <h3>Изоляция центральных миров</h3>
+                <p>Всё началось три столетия назад, когда центральные миры галактики закрыли свои границы. <span class="highlight">«Великое Сжатие»</span> — так историки назвали период изоляции богатых планет от внешних территорий.</p>
+                
+                <h3>Рождение Консорциума</h3>
+                <p>Логистические компании, оказавшиеся запертыми на периферии, объединились в <span class="highlight">Консорциум «Меридиан»</span>. Они не завоевали эти земли силой — они купили их, одну станцию за другой.</p>
             </div>
         </div>
 
-        <div id="slang" class="chapter">
-            <div class="chapter-header"><div class="chapter-number">МОДУЛЬ 06</div><h2 class="chapter-title">Шахтёрский Сленг</h2></div>
-            <div class="chapter-content">
-                <table class="game-table">
-                    <thead><tr><th>Выражение</th><th>Значение</th></tr></thead>
+        <!-- CHAPTER: ECONOMY -->
+        <div id="economy" class="chapter">
+            <div class="chapter-header">
+                <div class="chapter-number">03 / ЭКОНОМИЧЕСКАЯ СИСТЕМА</div>
+                <h2 class="chapter-title">ЭНЕРГЕТИЧЕСКИЙ КРЕДИТ</h2>
+            </div>
+            <div class="content-panel">
+                <p>На Грани нет золота. Есть только <span class="highlight">энергия</span> — единственная валюта, которая имеет значение.</p>
+                
+                <table class="tech-table">
+                    <thead>
+                        <tr><th>ВАЛЮТА</th><th>ОБОЗНАЧЕНИЕ</th><th>ОБЕСПЕЧЕНИЕ</th></tr>
+                    </thead>
                     <tbody>
-                        <tr><td>«Глотнуть пыли»</td><td>Обанкротиться или потерять корабль</td></tr>
-                        <tr><td>«Поймать призрака»</td><td>Найти жилу Ксенита</td></tr>
-                        <tr><td>«Ржаветь в доке»</td><td>Сидеть без дела из-за нехватки Гелионов</td></tr>
-                        <tr><td>«Холодная сварка»</td><td>Временный ремонт в полевых условиях</td></tr>
+                        <tr><td><strong>Гелион</strong></td><td>ГЛН ☉</td><td>1 мегаватт-час энергии</td></tr>
+                        <tr><td><strong>Эон</strong></td><td>30 дней</td><td>Доступ к глубокому космосу</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
+        <!-- CHAPTER: RESOURCES -->
+        <div id="resources" class="chapter">
+            <div class="chapter-header">
+                <div class="chapter-number">04 / МИНЕРАЛЬНЫЕ РЕСУРСЫ</div>
+                <h2 class="chapter-title">ДОБЫЧА И ПЕРЕРАБОТКА</h2>
+            </div>
+            <div class="content-panel">
+                <p>Семь ключевых минералов определяют экономику Грани. Каждый имеет своё прозвище в шахтёрских барах.</p>
+                
+                <div class="resource-grid">
+                    <div class="resource-card common">
+                        <div class="resource-name">Феррит</div>
+                        <div class="resource-slang">«Ржавка»</div>
+                        <div class="resource-desc">Базовый металл. Из него варят корпуса кораблей и мечты новичков.</div>
+                    </div>
+                    <div class="resource-card common">
+                        <div class="resource-name">Церрит</div>
+                        <div class="resource-slang">«Пепел»</div>
+                        <div class="resource-desc">Серый, сыпучий. Критичен для электроники.</div>
+                    </div>
+                    <div class="resource-card rare">
+                        <div class="resource-name">Вольмит</div>
+                        <div class="resource-slang">«Блеск»</div>
+                        <div class="resource-desc">Тяжёлый, тугоплавкий. Броня, стволы.</div>
+                    </div>
+                    <div class="resource-card rare">
+                        <div class="resource-name">Крионит</div>
+                        <div class="resource-slang">«Холод»</div>
+                        <div class="resource-desc">Минерал вечной мерзлоты. Охлаждение варп-ядер.</div>
+                    </div>
+                    <div class="resource-card legendary">
+                        <div class="resource-name">Аурит</div>
+                        <div class="resource-slang">«Заря»</div>
+                        <div class="resource-desc">Золотистый, радиоактивный. Энергетика, щиты.</div>
+                    </div>
+                    <div class="resource-card legendary">
+                        <div class="resource-name">Ксенит</div>
+                        <div class="resource-slang">«Призрак»</div>
+                        <div class="resource-desc">Полупрозрачный. Стелс-модули.</div>
+                    </div>
+                    <div class="resource-card legendary">
+                        <div class="resource-name">Эфирит</div>
+                        <div class="resource-slang">«Дыхание»</div>
+                        <div class="resource-desc">Легендарная руда глубин. Те, кто добывал, редко возвращаются.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHAPTER: FACTIONS -->
+        <div id="factions" class="chapter">
+            <div class="chapter-header">
+                <div class="chapter-number">05 / ФРАКЦИИ ГРАНИ</div>
+                <h2 class="chapter-title">ГРУППИРОВКИ И СОЮЗЫ</h2>
+            </div>
+            <div class="content-panel">
+                <h3>Консорциум «Меридиан»</h3>
+                <p>Торговая сверхструктура. Не воюет — покупает. Не угрожает — выставляет счёт. Их девиз: <span class="highlight">«Порядок — это прибыльность»</span>.</p>
+                
+                <h3>Синдикат «Глубина»</h3>
+                <p>Союз шахтёров. Грубые, спаянные, упрямые. Их закон: <span class="highlight">«Не бросай своего в открытом космосе»</span>.</p>
+                
+                <h3>«Стервятники»</h3>
+                <p>Пираты и рейдеры. Без флага, без кодекса, без жалости. На Грани говорят: <span class="highlight">«Если ты видишь Стервятника — ты уже опоздал»</span>.</p>
+            </div>
+        </div>
+
+        <!-- CHAPTER: SLANG -->
+        <div id="slang" class="chapter">
+            <div class="chapter-header">
+                <div class="chapter-number">06 / ШАХТЁРСКИЙ СЛЕНГ</div>
+                <h2 class="chapter-title">ЖАРГОН ПЕРИФЕРИИ</h2>
+            </div>
+            <div class="content-panel">
+                <table class="tech-table">
+                    <thead>
+                        <tr><th>ВЫРАЖЕНИЕ</th><th>ЗНАЧЕНИЕ</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>«Глотнуть пыли»</td><td>Обанкротиться или потерять корабль</td></tr>
+                        <tr><td>«Поймать призрака»</td><td>Найти жилу Ксенита</td></tr>
+                        <tr><td>«Ржаветь в доке»</td><td>Сидеть без дела из-за нехватки Гелионов</td></tr>
+                        <tr><td>«Заряженный»</td><td>Корабль с Ауритом или Эфиритом</td></tr>
+                        <tr><td>«Холодная сварка»</td><td>Временный ремонт в поле</td></tr>
+                        <tr><td>«Слепой прыжок»</td><td>Варп без проверки координат</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CHAPTER: LOCATIONS -->
         <div id="locations" class="chapter">
-            <div class="chapter-header"><div class="chapter-number">МОДУЛЬ 07</div><h2 class="chapter-title">Ключевые Локации</h2></div>
-            <div class="chapter-content">
+            <div class="chapter-header">
+                <div class="chapter-number">07 / КЛЮЧЕВЫЕ ЛОКАЦИИ</div>
+                <h2 class="chapter-title">СТРАТЕГИЧЕСКИЕ ТОЧКИ</h2>
+            </div>
+            <div class="content-panel">
                 <h3>Меридиан-Прайм</h3>
-                <p>Торговое сердце Грани. Многоуровневая станция-кольцо диаметром 15 километров, вращающаяся вокруг чёрной дыры.</p>
-                <div class="warning-box">В Поясе «Шёпот» зафиксированы фантомные сигналы. Не доверяйте приборам. Доверяйте глазам.</div>
+                <p>Торговое сердце Грани. Многоуровневая станция-кольцо диаметром <span class="highlight">15 километров</span>, вращающаяся вокруг чёрной дыры класса «Карлик».</p>
+                
+                <div class="warning-box">
+                    В Поясе «Шёпот» зафиксированы фантомные сигналы. Не доверяйте приборам. Доверяйте глазам.
+                </div>
+
                 <h3>Пояс «Шёпот»</h3>
                 <p>Астероидное поле с аномальной гравитацией. Богато на Ксенит и Эфирит. Сканеры здесь работают с помехами.</p>
             </div>
         </div>
     </div>
 
-    <div class="audio-player">
+    <!-- AUDIO PANEL -->
+    <div class="audio-panel">
         <button class="play-btn" id="playBtn" onclick="toggleAudio()">▶</button>
         <div class="audio-info">
-            <div id="audioTitle">Выберите главу для озвучки</div>
-            <div id="audioStatus" style="font-size: 0.7rem; color: var(--neon-cyan);">Текущий: <span id="currentVoice">Загрузка...</span></div>
+            <div class="audio-title" id="audioTitle">Выберите главу для озвучки</div>
+            <div class="audio-status">Голос: <span id="currentVoice">Загрузка...</span></div>
         </div>
         <label class="voice-label" for="voiceSelect">ГОЛОС:</label>
         <select class="voice-select" id="voiceSelect" onchange="changeVoice()">
@@ -277,7 +581,7 @@
         function showChapter(id) {
             document.querySelectorAll('.chapter').forEach(c => c.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
             window.scrollTo({top: 0, behavior: 'smooth'});
             if (isSpeaking) stopAudio();
@@ -318,13 +622,13 @@
         }
 
         function playAudio() {
-            const activeChapter = document.querySelector('.chapter.active .chapter-content');
+            const activeChapter = document.querySelector('.chapter.active .content-panel');
             if (!activeChapter) return;
             const text = activeChapter.innerText;
             currentUtterance = new SpeechSynthesisUtterance(text);
             currentUtterance.lang = 'ru-RU';
-            currentUtterance.rate = 0.95; // Чуть медленнее для чёткости, но энергично
-            currentUtterance.pitch = 1.0;  // Нормальный тон
+            currentUtterance.rate = 0.95;
+            currentUtterance.pitch = 1.0;
             currentUtterance.volume = 1.0;
             
             if (voices.length > 0 && selectedVoiceIndex < voices.length) {
@@ -347,15 +651,12 @@
             document.getElementById('playBtn').innerText = '▶'; 
         }
 
-        // Загрузка всех голосов
         function loadVoices() {
             voices = speechSynthesis.getVoices();
             const select = document.getElementById('voiceSelect');
             
             if (voices.length > 0) {
                 select.innerHTML = '';
-                
-                // Сначала русские голоса
                 const russianVoices = voices.filter(v => v.lang.includes('ru'));
                 russianVoices.forEach((voice, index) => {
                     const option = document.createElement('option');
@@ -363,8 +664,6 @@
                     option.text = '🇷🇺 ' + voice.name + ' (' + voice.lang + ')';
                     select.appendChild(option);
                 });
-                
-                // Потом остальные
                 const otherVoices = voices.filter(v => !v.lang.includes('ru'));
                 otherVoices.forEach((voice) => {
                     const option = document.createElement('option');
@@ -372,8 +671,6 @@
                     option.text = '🌍 ' + voice.name + ' (' + voice.lang + ')';
                     select.appendChild(option);
                 });
-                
-                // Выбираем первый русский голос
                 if (russianVoices.length > 0) {
                     selectedVoiceIndex = voices.indexOf(russianVoices[0]);
                     document.getElementById('currentVoice').innerText = russianVoices[0].name;
@@ -384,14 +681,10 @@
             }
         }
 
-        // Инициализация
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = loadVoices;
         }
-        
-        // Загружаем голоса при старте
         setTimeout(loadVoices, 100);
-        // Повторная загрузка через 500мс (на случай медленной загрузки)
         setTimeout(loadVoices, 500);
     </script>
 </body>
