@@ -5,15 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0a0e1a">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>ODYSSEY: ГРАНЬ | КОДЕКС ПОГРАНИЧНЫХ ТЕРРИТОРИЙ v2.0</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="https://via.placeholder.com/192/ff9500/0a0e1a?text=OG">
     <style>
         :root {
             --bg-dark: #0a0e1a;
-            --bg-panel: #111827;
-            --bg-darker: #080c14;
+            --bg-panel: rgba(17, 24, 39, 0.85);
+            --bg-darker: rgba(8, 12, 20, 0.9);
             --accent-orange: #ff9500;
             --accent-yellow: #ffb347;
             --accent-cyan: #00d9ff;
@@ -22,7 +20,7 @@
             --text-primary: #e0e0e0;
             --text-secondary: #8892b0;
             --text-muted: #556080;
-            --border-color: #1e293b;
+            --border-color: rgba(30, 41, 59, 0.8);
             --font-mono: 'Consolas', 'Courier New', monospace;
             --font-ui: 'Segoe UI', Roboto, sans-serif;
         }
@@ -35,19 +33,43 @@
             font-family: var(--font-ui);
             overflow-x: hidden;
             line-height: 1.6;
-            background-image: 
-                linear-gradient(rgba(255, 149, 0, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 149, 0, 0.02) 1px, transparent 1px);
-            background-size: 50px 50px;
+            min-height: 100vh;
         }
 
+        /* === ЗВЁЗДНЫЙ ФОН НА CANVAS === */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        /* Сетка поверх звёзд */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 149, 0, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 149, 0, 0.04) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Scanlines */
         .scanlines {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.15));
             background-size: 100% 3px;
-            pointer-events: none; z-index: 9999; opacity: 0.15;
+            pointer-events: none; z-index: 9999; opacity: 0.3;
         }
 
+        /* Линия сканирования */
         .scan-line {
             position: fixed;
             top: 0;
@@ -55,7 +77,7 @@
             width: 100%;
             height: 2px;
             background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
-            opacity: 0.3;
+            opacity: 0.4;
             z-index: 9998;
             animation: scanMove 8s linear infinite;
             pointer-events: none;
@@ -66,12 +88,11 @@
             100% { top: 100vh; }
         }
 
+        /* Частицы */
         .particles {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             pointer-events: none;
             z-index: -1;
             overflow: hidden;
@@ -79,8 +100,7 @@
 
         .particle {
             position: absolute;
-            width: 2px;
-            height: 2px;
+            width: 2px; height: 2px;
             background: var(--accent-orange);
             border-radius: 50%;
             opacity: 0;
@@ -100,7 +120,7 @@
             100% { top: -10px; opacity: 0; }
         }
 
-        /* HEADER */
+        /* === HEADER === */
         .header {
             background: var(--bg-darker);
             border-bottom: 2px solid var(--accent-orange);
@@ -109,15 +129,14 @@
             z-index: 1000;
             display: flex; justify-content: space-between; align-items: center;
             overflow: hidden;
+            backdrop-filter: blur(10px);
         }
 
         .header::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 149, 0, 0.3), transparent);
             animation: energyFlow 4s ease-in-out infinite;
         }
@@ -147,13 +166,11 @@
         .project-info h1 {
             font-family: var(--font-mono); font-size: 1.4rem; color: var(--text-primary);
             letter-spacing: 3px; text-transform: uppercase;
-            margin: 0;
         }
 
         .project-info .subtitle {
             font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-secondary);
-            letter-spacing: 2px;
-            margin-top: 2px;
+            letter-spacing: 2px; margin-top: 2px;
         }
 
         .header-stats {
@@ -162,17 +179,9 @@
             position: relative; z-index: 1;
         }
 
-        .stat-item {
-            display: flex; flex-direction: column; gap: 3px;
-        }
-
-        .stat-label {
-            color: var(--text-muted); font-size: 0.65rem; text-transform: uppercase;
-        }
-
-        .stat-value {
-            color: var(--accent-orange); font-weight: bold; font-size: 0.95rem;
-        }
+        .stat-item { display: flex; flex-direction: column; gap: 3px; }
+        .stat-label { color: var(--text-muted); font-size: 0.65rem; text-transform: uppercase; }
+        .stat-value { color: var(--accent-orange); font-weight: bold; font-size: 0.95rem; }
 
         .status-badge {
             background: rgba(0, 255, 136, 0.1);
@@ -187,11 +196,9 @@
         .status-badge::before {
             content: '';
             position: absolute;
-            left: -12px;
-            top: 50%;
+            left: -12px; top: 50%;
             transform: translateY(-50%);
-            width: 6px;
-            height: 6px;
+            width: 6px; height: 6px;
             background: var(--accent-green);
             border-radius: 50%;
             animation: blink 1.5s ease-in-out infinite;
@@ -202,171 +209,16 @@
             50% { opacity: 0.3; }
         }
 
-        /* === ПАНЕЛЬ КОМАНДНОГО ЦЕНТРА === */
-        .command-center {
-            position: fixed;
-            top: 75px;
-            left: 0;
-            right: 0;
-            height: 180px;
-            background: var(--bg-darker);
-            border-bottom: 2px solid var(--accent-orange);
-            z-index: 998;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 40px;
-            padding: 20px;
-            overflow: hidden;
-        }
-
-        /* Звёздное небо на canvas */
-        #starfield {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-        }
-
-        /* Радар */
-        .radar-container {
-            position: relative;
-            width: 140px;
-            height: 140px;
-            z-index: 1;
-        }
-
-        .radar {
-            width: 100%;
-            height: 100%;
-            border: 2px solid var(--accent-cyan);
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
-        }
-
-        /* Кольца радара */
-        .radar::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 66%;
-            height: 66%;
-            border: 1px solid rgba(0, 217, 255, 0.3);
-            border-radius: 50%;
-        }
-
-        .radar::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 33%;
-            height: 33%;
-            border: 1px solid rgba(0, 217, 255, 0.3);
-            border-radius: 50%;
-        }
-
-        /* Вращающаяся линия сканирования */
-        .radar-sweep {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 50%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--accent-cyan), transparent);
-            transform-origin: left center;
-            animation: radarRotate 3s linear infinite;
-        }
-
-        @keyframes radarRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* Центр радара */
-        .radar-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 6px;
-            height: 6px;
-            background: var(--accent-cyan);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--accent-cyan);
-        }
-
-        /* Цели на радаре */
-        .radar-target {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--accent-red);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent-red);
-            animation: targetBlink 1s ease-in-out infinite;
-        }
-
-        .radar-target:nth-child(3) { top: 30%; left: 60%; animation-delay: 0s; }
-        .radar-target:nth-child(4) { top: 65%; left: 35%; animation-delay: 0.3s; }
-        .radar-target:nth-child(5) { top: 45%; left: 75%; animation-delay: 0.6s; }
-
-        @keyframes targetBlink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        /* Данные радара */
-        .radar-data {
-            position: absolute;
-            bottom: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: var(--font-mono);
-            font-size: 0.65rem;
-            color: var(--accent-cyan);
-            white-space: nowrap;
-        }
-
-        /* Координаты рядом с радаром */
-        .coordinates {
-            position: relative;
-            z-index: 1;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-align: left;
-            line-height: 1.8;
-        }
-
-        .coordinates .label {
-            color: var(--text-muted);
-            font-size: 0.6rem;
-            text-transform: uppercase;
-        }
-
-        .coordinates .value {
-            color: var(--accent-cyan);
-            font-size: 0.85rem;
-        }
-
-        /* NAVIGATION TABS */
+        /* === НАВИГАЦИЯ === */
         .nav-tabs {
-            position: fixed; top: 260px; left: 0; right: 0;
-            background: var(--bg-panel);
+            position: fixed; top: 75px; left: 0; right: 0;
+            background: var(--bg-darker);
             border-bottom: 1px solid var(--border-color);
             padding: 0 20px;
             z-index: 999;
             display: flex; gap: 5px;
             overflow-x: auto;
+            backdrop-filter: blur(10px);
         }
 
         .nav-tab {
@@ -407,10 +259,10 @@
             50% { box-shadow: 0 0 20px rgba(255, 149, 0, 0.6); }
         }
 
-        /* MAIN CONTENT */
+        /* === КОНТЕНТ === */
         .main-container {
             max-width: 1400px; margin: 0 auto;
-            padding: 340px 20px 100px;
+            padding: 160px 20px 100px;
         }
 
         .chapter-header {
@@ -421,6 +273,7 @@
             margin-bottom: 30px;
             position: relative;
             animation: borderPulse 3s ease-in-out infinite;
+            backdrop-filter: blur(5px);
         }
 
         @keyframes borderPulse {
@@ -458,6 +311,7 @@
             padding: 30px;
             margin-bottom: 20px;
             position: relative;
+            backdrop-filter: blur(5px);
         }
 
         .content-panel h3 {
@@ -536,12 +390,10 @@
             margin-bottom: 10px;
         }
 
-        .resource-desc {
-            color: var(--text-secondary); font-size: 0.9rem;
-        }
+        .resource-desc { color: var(--text-secondary); font-size: 0.9rem; }
 
         .warning-box {
-            background: rgba(255, 51, 51, 0.05);
+            background: rgba(255, 51, 51, 0.1);
             border: 1px solid var(--accent-red);
             border-left: 4px solid var(--accent-red);
             padding: 20px; margin: 20px 0;
@@ -555,9 +407,7 @@
             50% { box-shadow: 0 0 20px rgba(255, 51, 51, 0.6); }
         }
 
-        .warning-box::before {
-            content: '⚠ ВНИМАНИЕ: '; font-weight: bold;
-        }
+        .warning-box::before { content: '⚠ ВНИМАНИЕ: '; font-weight: bold; }
 
         .quote-block {
             background: var(--bg-darker);
@@ -572,7 +422,102 @@
             margin-top: 10px; font-family: var(--font-mono);
         }
 
-        /* AUDIO PANEL */
+        /* === HUD РАДАР (фиксированный в углу) === */
+        .hud-radar {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 998;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .radar {
+            width: 120px;
+            height: 120px;
+            border: 2px solid var(--accent-cyan);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, rgba(0, 0, 0, 0.7) 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .radar::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 66%; height: 66%;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 50%;
+        }
+
+        .radar::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 33%; height: 33%;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 50%;
+        }
+
+        .radar-sweep {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 50%; height: 2px;
+            background: linear-gradient(90deg, var(--accent-cyan), transparent);
+            transform-origin: left center;
+            animation: radarRotate 3s linear infinite;
+        }
+
+        @keyframes radarRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .radar-center {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px; height: 6px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        .radar-target {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: var(--accent-red);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-red);
+            animation: targetBlink 1s ease-in-out infinite;
+        }
+
+        .radar-target:nth-child(4) { top: 30%; left: 60%; animation-delay: 0s; }
+        .radar-target:nth-child(5) { top: 65%; left: 35%; animation-delay: 0.3s; }
+        .radar-target:nth-child(6) { top: 45%; left: 75%; animation-delay: 0.6s; }
+
+        @keyframes targetBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .radar-label {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        /* === АУДИО ПАНЕЛЬ === */
         .audio-panel {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: var(--bg-darker);
@@ -580,6 +525,7 @@
             padding: 15px 20px;
             z-index: 1000;
             display: flex; align-items: center; gap: 15px;
+            backdrop-filter: blur(10px);
         }
 
         .play-btn {
@@ -615,7 +561,6 @@
             cursor: pointer; max-width: 200px;
         }
 
-        /* CHAPTER ANIMATION */
         .chapter { display: none; }
         .chapter.active { 
             display: block; 
@@ -623,19 +568,11 @@
         }
 
         @keyframes chapterIn {
-            0% { 
-                opacity: 0; 
-                transform: translateY(20px);
-                filter: blur(5px);
-            }
-            100% { 
-                opacity: 1; 
-                transform: translateY(0);
-                filter: blur(0);
-            }
+            0% { opacity: 0; transform: translateY(20px); filter: blur(5px); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
-        /* MOBILE */
+        /* === МОБИЛЬНАЯ АДАПТАЦИЯ === */
         @media (max-width: 768px) {
             .header { 
                 flex-direction: column; 
@@ -646,33 +583,30 @@
             .header-stats { display: none; }
             .project-info h1 { font-size: 1.1rem; }
             .project-info .subtitle { font-size: 0.6rem; }
-            
-            .command-center {
-                top: 95px;
-                height: 150px;
-                gap: 20px;
-            }
-            
-            .radar-container {
-                width: 100px;
-                height: 100px;
-            }
-            
-            .coordinates {
-                font-size: 0.65rem;
-            }
-            
-            .nav-tabs { top: 250px; }
-            .main-container { padding: 320px 15px 100px; }
+            .nav-tabs { top: 95px; }
+            .main-container { padding: 170px 15px 100px; }
             .chapter-title { font-size: 1.3rem; }
             .content-panel { padding: 20px; }
             .resource-grid { grid-template-columns: 1fr; }
             .audio-panel { flex-wrap: wrap; padding: 10px; }
             .voice-select { max-width: 120px; }
+            
+            .hud-radar {
+                bottom: 70px;
+                right: 10px;
+            }
+            .radar {
+                width: 80px;
+                height: 80px;
+            }
+            .radar-label { font-size: 0.5rem; }
         }
     </style>
 </head>
 <body>
+    <!-- ЗВЁЗДНЫЙ ФОН -->
+    <canvas id="starfield"></canvas>
+    <div class="grid-overlay"></div>
     <div class="scanlines"></div>
     <div class="scan-line"></div>
     
@@ -684,6 +618,7 @@
         <div class="particle"></div>
     </div>
 
+    <!-- HEADER -->
     <header class="header">
         <div class="header-left">
             <div class="logo">☉</div>
@@ -712,31 +647,7 @@
         </div>
     </header>
 
-    <!-- ПАНЕЛЬ КОМАНДНОГО ЦЕНТРА -->
-    <div class="command-center">
-        <canvas id="starfield"></canvas>
-        
-        <div class="radar-container">
-            <div class="radar">
-                <div class="radar-sweep"></div>
-                <div class="radar-center"></div>
-                <div class="radar-target"></div>
-                <div class="radar-target"></div>
-                <div class="radar-target"></div>
-            </div>
-            <div class="radar-data">СЕКТОР: ПЕРИФЕРИЯ</div>
-        </div>
-
-        <div class="coordinates">
-            <div><span class="label">КООРДИНАТЫ:</span></div>
-            <div class="value">X: 847.291 | Y: 203.456</div>
-            <div><span class="label">СКОРОСТЬ:</span></div>
-            <div class="value">0.00 C (СТОЯНКА)</div>
-            <div><span class="label">РЕАКТОР:</span></div>
-            <div class="value">98.7% НОРМА</div>
-        </div>
-    </div>
-
+    <!-- НАВИГАЦИЯ -->
     <nav class="nav-tabs">
         <button class="nav-tab active" onclick="showChapter('intro')">01 ВВЕДЕНИЕ</button>
         <button class="nav-tab" onclick="showChapter('history')">02 ИСТОРИЯ</button>
@@ -747,6 +658,7 @@
         <button class="nav-tab" onclick="showChapter('locations')">07 ЛОКАЦИИ</button>
     </nav>
 
+    <!-- КОНТЕНТ -->
     <div class="main-container">
         <div id="intro" class="chapter active">
             <div class="chapter-header">
@@ -932,6 +844,19 @@
         </div>
     </div>
 
+    <!-- HUD РАДАР -->
+    <div class="hud-radar">
+        <div class="radar">
+            <div class="radar-sweep"></div>
+            <div class="radar-center"></div>
+            <div class="radar-target"></div>
+            <div class="radar-target"></div>
+            <div class="radar-target"></div>
+        </div>
+        <div class="radar-label">СЕКТОР: ПЕРИФЕРИЯ</div>
+    </div>
+
+    <!-- АУДИО ПАНЕЛЬ -->
     <div class="audio-panel">
         <button class="play-btn" id="playBtn" onclick="toggleAudio()">▶</button>
         <div class="audio-info">
@@ -945,20 +870,20 @@
     </div>
 
     <script>
-        // === ЗВЁЗДНОЕ НЕБО НА CANVAS ===
+        // === ЗВЁЗДНОЕ НЕБО НА ВЕСЬ ЭКРАН ===
         const canvas = document.getElementById('starfield');
         const ctx = canvas.getContext('2d');
         
         function resizeCanvas() {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
         
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
         const stars = [];
-        const numStars = 100;
+        const numStars = 200;
 
         for (let i = 0; i < numStars; i++) {
             stars.push({
