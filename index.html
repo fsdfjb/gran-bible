@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0a0e1a">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>ГРАНЬ | ODYSSEY · АРХИТЕКТУРНЫЙ ЧЕРТЁЖ v2.0</title>
+    <title>КОДЕКС ГРАНИ | АРХИВ ПОГРАНИЧНЫХ ТЕРРИТОРИЙ v2.0</title>
     <link rel="manifest" href="manifest.json">
     <style>
         :root {
@@ -39,7 +39,6 @@
             background-size: 50px 50px;
         }
 
-        /* Scanlines */
         .scanlines {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
@@ -47,7 +46,6 @@
             pointer-events: none; z-index: 9999; opacity: 0.15;
         }
 
-        /* HEADER */
         .header {
             background: var(--bg-darker);
             border-bottom: 2px solid var(--accent-orange);
@@ -103,7 +101,6 @@
             letter-spacing: 2px; text-transform: uppercase;
         }
 
-        /* NAVIGATION TABS */
         .nav-tabs {
             position: fixed; top: 70px; left: 0; right: 0;
             background: var(--bg-panel);
@@ -139,13 +136,11 @@
         }
         .nav-tab.active::before { transform: scaleX(1); }
 
-        /* MAIN CONTENT */
         .main-container {
             max-width: 1400px; margin: 0 auto;
             padding: 140px 20px 100px;
         }
 
-        /* CHAPTER HEADER */
         .chapter-header {
             background: var(--bg-panel);
             border: 1px solid var(--border-color);
@@ -177,7 +172,6 @@
             letter-spacing: 5px;
         }
 
-        /* CONTENT PANEL */
         .content-panel {
             background: var(--bg-panel);
             border: 1px solid var(--border-color);
@@ -203,7 +197,6 @@
             color: var(--accent-yellow); font-weight: bold;
         }
 
-        /* TABLES */
         .tech-table {
             width: 100%; border-collapse: collapse;
             margin: 20px 0;
@@ -224,7 +217,6 @@
 
         .tech-table tr:hover { background: rgba(255, 149, 0, 0.05); }
 
-        /* RESOURCE CARDS */
         .resource-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 15px; margin: 20px 0;
@@ -263,7 +255,6 @@
             color: var(--text-secondary); font-size: 0.9rem;
         }
 
-        /* WARNING BOX */
         .warning-box {
             background: rgba(255, 51, 51, 0.05);
             border: 1px solid var(--accent-red);
@@ -277,7 +268,6 @@
             content: '⚠ ВНИМАНИЕ: '; font-weight: bold;
         }
 
-        /* QUOTE BLOCK */
         .quote-block {
             background: var(--bg-darker);
             border-left: 4px solid var(--accent-cyan);
@@ -291,7 +281,6 @@
             margin-top: 10px; font-family: var(--font-mono);
         }
 
-        /* AUDIO PLAYER */
         .audio-panel {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: var(--bg-darker);
@@ -328,7 +317,6 @@
             cursor: pointer; max-width: 200px;
         }
 
-        /* CHAPTER VISIBILITY */
         .chapter { display: none; }
         .chapter.active { display: block; animation: fadeIn 0.5s; }
 
@@ -337,7 +325,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* MOBILE */
         @media (max-width: 768px) {
             .header { flex-direction: column; gap: 10px; padding: 10px; }
             .header-stats { display: none; }
@@ -354,13 +341,12 @@
 <body>
     <div class="scanlines"></div>
 
-    <!-- HEADER -->
     <header class="header">
         <div class="header-left">
-            <div class="logo">⚡</div>
+            <div class="logo">☉</div>
             <div class="project-info">
-                <h1>ГРАНЬ</h1>
-                <div class="subtitle">ODYSSEY · АРХИТЕКТУРНЫЙ ЧЕРТЁЖ v2.0</div>
+                <h1>КОДЕКС ГРАНИ</h1>
+                <div class="subtitle">АРХИВ ПОГРАНИЧНЫХ ТЕРРИТОРИЙ v2.0</div>
             </div>
         </div>
         <div class="header-stats">
@@ -378,12 +364,11 @@
             </div>
             <div class="stat-item">
                 <div class="stat-label">СТАТУС</div>
-                <div class="status-badge">ПРИНЯТО В РАБОТУ</div>
+                <div class="status-badge">АКТИВЕН</div>
             </div>
         </div>
     </header>
 
-    <!-- NAVIGATION TABS -->
     <nav class="nav-tabs">
         <button class="nav-tab active" onclick="showChapter('intro')">01 ВВЕДЕНИЕ</button>
         <button class="nav-tab" onclick="showChapter('history')">02 ИСТОРИЯ</button>
@@ -395,10 +380,9 @@
     </nav>
 
     <div class="main-container">
-        <!-- CHAPTER: INTRO -->
         <div id="intro" class="chapter active">
             <div class="chapter-header">
-                <div class="chapter-number">02 / ЦЕЛЕВАЯ СТРУКТУРА</div>
+                <div class="chapter-number">01 / ДОСТУП РАЗРЕШЁН</div>
                 <h2 class="chapter-title">ДОБРО ПОЖАЛОВАТЬ НА ГРАНЬ</h2>
             </div>
             
@@ -418,10 +402,9 @@
             </div>
         </div>
 
-        <!-- CHAPTER: HISTORY -->
         <div id="history" class="chapter">
             <div class="chapter-header">
-                <div class="chapter-number">02 / ХРОНИКИ ОСВОЕНИЯ</div>
+                <div class="chapter-number">02 / ХРОНОЛОГИЯ</div>
                 <h2 class="chapter-title">ЭПОХА ВЕЛИКОГО СЖАТИЯ</h2>
             </div>
             <div class="content-panel">
@@ -430,13 +413,15 @@
                 
                 <h3>Рождение Консорциума</h3>
                 <p>Логистические компании, оказавшиеся запертыми на периферии, объединились в <span class="highlight">Консорциум «Меридиан»</span>. Они не завоевали эти земли силой — они купили их, одну станцию за другой.</p>
+
+                <h3>Формирование Синдиката</h3>
+                <p>Шахтёры астероидных поясов первыми почувствовали «заботу» Консорциума. Кабальные контракты и завышенные цены привели к стихийным забастовкам, из которых родился <span class="highlight">Синдикат «Глубина»</span>.</p>
             </div>
         </div>
 
-        <!-- CHAPTER: ECONOMY -->
         <div id="economy" class="chapter">
             <div class="chapter-header">
-                <div class="chapter-number">03 / ЭКОНОМИЧЕСКАЯ СИСТЕМА</div>
+                <div class="chapter-number">03 / ВАЛЮТНАЯ СИСТЕМА</div>
                 <h2 class="chapter-title">ЭНЕРГЕТИЧЕСКИЙ КРЕДИТ</h2>
             </div>
             <div class="content-panel">
@@ -451,10 +436,12 @@
                         <tr><td><strong>Эон</strong></td><td>30 дней</td><td>Доступ к глубокому космосу</td></tr>
                     </tbody>
                 </table>
+
+                <h3>Гелион — кровь экономики</h3>
+                <p>Один <span class="highlight">Гелион</span> равен одному часу работы стандартного реактора класса «Прометей». Это реальная энергия, которую можно потратить на поддержку жизнеобеспечения станции или запуск варп-двигателя.</p>
             </div>
         </div>
 
-        <!-- CHAPTER: RESOURCES -->
         <div id="resources" class="chapter">
             <div class="chapter-header">
                 <div class="chapter-number">04 / МИНЕРАЛЬНЫЕ РЕСУРСЫ</div>
@@ -467,65 +454,72 @@
                     <div class="resource-card common">
                         <div class="resource-name">Феррит</div>
                         <div class="resource-slang">«Ржавка»</div>
-                        <div class="resource-desc">Базовый металл. Из него варят корпуса кораблей и мечты новичков.</div>
+                        <div class="resource-desc">Базовый металл, вездесущ. Из него варят корпуса кораблей и мечты новичков.</div>
                     </div>
                     <div class="resource-card common">
                         <div class="resource-name">Церрит</div>
                         <div class="resource-slang">«Пепел»</div>
-                        <div class="resource-desc">Серый, сыпучий. Критичен для электроники.</div>
+                        <div class="resource-desc">Серый, сыпучий. Критичен для электроники и схем.</div>
                     </div>
                     <div class="resource-card rare">
                         <div class="resource-name">Вольмит</div>
                         <div class="resource-slang">«Блеск»</div>
-                        <div class="resource-desc">Тяжёлый, тугоплавкий. Броня, стволы.</div>
+                        <div class="resource-desc">Тяжёлый, тугоплавкий. Броня, стволы, опоры станций.</div>
                     </div>
                     <div class="resource-card rare">
                         <div class="resource-name">Крионит</div>
                         <div class="resource-slang">«Холод»</div>
-                        <div class="resource-desc">Минерал вечной мерзлоты. Охлаждение варп-ядер.</div>
+                        <div class="resource-desc">Минерал вечной мерзлоты. Критичен для систем охлаждения варп-ядер.</div>
                     </div>
                     <div class="resource-card legendary">
                         <div class="resource-name">Аурит</div>
                         <div class="resource-slang">«Заря»</div>
-                        <div class="resource-desc">Золотистый, радиоактивный. Энергетика, щиты.</div>
+                        <div class="resource-desc">Золотистый, радиоактивный. Энергетика, щиты, двигатели.</div>
                     </div>
                     <div class="resource-card legendary">
                         <div class="resource-name">Ксенит</div>
                         <div class="resource-slang">«Призрак»</div>
-                        <div class="resource-desc">Полупрозрачный. Стелс-модули.</div>
+                        <div class="resource-desc">Полупрозрачный, нестабильный. Стелс-модули и сканеры.</div>
                     </div>
                     <div class="resource-card legendary">
                         <div class="resource-name">Эфирит</div>
                         <div class="resource-slang">«Дыхание»</div>
-                        <div class="resource-desc">Легендарная руда глубин. Те, кто добывал, редко возвращаются.</div>
+                        <div class="resource-desc">Легендарная руда глубин. Почти миф. Те, кто его добывал, редко возвращаются.</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- CHAPTER: FACTIONS -->
         <div id="factions" class="chapter">
             <div class="chapter-header">
-                <div class="chapter-number">05 / ФРАКЦИИ ГРАНИ</div>
+                <div class="chapter-number">05 / ФРАКЦИИ</div>
                 <h2 class="chapter-title">ГРУППИРОВКИ И СОЮЗЫ</h2>
             </div>
             <div class="content-panel">
                 <h3>Консорциум «Меридиан»</h3>
-                <p>Торговая сверхструктура. Не воюет — покупает. Не угрожает — выставляет счёт. Их девиз: <span class="highlight">«Порядок — это прибыльность»</span>.</p>
+                <p>Торговая сверхструктура. Контролирует станцию «Меридиан-Прайм», диктует курсы обмена, владеет логистикой. Не воюет — покупает. Не угрожает — выставляет счёт.</p>
+                <p style="color: var(--accent-orange); font-family: var(--font-mono); margin-top: 10px;">
+                    <strong>ДЕВИЗ:</strong> «Порядок — это прибыльность»
+                </p>
                 
                 <h3>Синдикат «Глубина»</h3>
-                <p>Союз шахтёров. Грубые, спаянные, упрямые. Их закон: <span class="highlight">«Не бросай своего в открытом космосе»</span>.</p>
-                
+                <p>Союз шахтёров и буровиков. Грубые, спаянные, упрямые. Живут на астероидах, дышат рециклом, считают гелионы до последнего.</p>
+                <p style="color: var(--accent-orange); font-family: var(--font-mono); margin-top: 10px;">
+                    <strong>ЗАКОН:</strong> «Не бросай своего в открытом космосе»
+                </p>
+
                 <h3>«Стервятники»</h3>
-                <p>Пираты и рейдеры. Без флага, без кодекса, без жалости. На Грани говорят: <span class="highlight">«Если ты видишь Стервятника — ты уже опоздал»</span>.</p>
+                <p>Пираты и рейдеры. Без флага, без кодекса, без жалости. Быстрые корабли, грязные трюки, короткие переговоры.</p>
+                <p style="color: var(--accent-red); font-family: var(--font-mono); margin-top: 10px;">
+                    <strong>ТАКТИКА:</strong> Ударил-исчез
+                </p>
             </div>
         </div>
 
-        <!-- CHAPTER: SLANG -->
         <div id="slang" class="chapter">
             <div class="chapter-header">
-                <div class="chapter-number">06 / ШАХТЁРСКИЙ СЛЕНГ</div>
-                <h2 class="chapter-title">ЖАРГОН ПЕРИФЕРИИ</h2>
+                <div class="chapter-number">06 / ЛЕКСИКОН</div>
+                <h2 class="chapter-title">ШАХТЁРСКИЙ СЛЕНГ</h2>
             </div>
             <div class="content-panel">
                 <table class="tech-table">
@@ -534,37 +528,42 @@
                     </thead>
                     <tbody>
                         <tr><td>«Глотнуть пыли»</td><td>Обанкротиться или потерять корабль</td></tr>
-                        <tr><td>«Поймать призрака»</td><td>Найти жилу Ксенита</td></tr>
+                        <tr><td>«Поймать призрака»</td><td>Найти жилу Ксенита или скрытый тайник</td></tr>
                         <tr><td>«Ржаветь в доке»</td><td>Сидеть без дела из-за нехватки Гелионов</td></tr>
-                        <tr><td>«Заряженный»</td><td>Корабль с Ауритом или Эфиритом</td></tr>
-                        <tr><td>«Холодная сварка»</td><td>Временный ремонт в поле</td></tr>
-                        <tr><td>«Слепой прыжок»</td><td>Варп без проверки координат</td></tr>
+                        <tr><td>«Заряженный»</td><td>Корабль, полностью загруженный Ауритом или Эфиритом</td></tr>
+                        <tr><td>«Холодная сварка»</td><td>Временный, ненадёжный ремонт в полевых условиях</td></tr>
+                        <tr><td>«Слепой прыжок»</td><td>Варп-прыжок без полной проверки координат</td></tr>
+                        <tr><td>«Пустой трюм»</td><td>Бедный капитан, неудачник</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- CHAPTER: LOCATIONS -->
         <div id="locations" class="chapter">
             <div class="chapter-header">
-                <div class="chapter-number">07 / КЛЮЧЕВЫЕ ЛОКАЦИИ</div>
+                <div class="chapter-number">07 / КАРТА</div>
                 <h2 class="chapter-title">СТРАТЕГИЧЕСКИЕ ТОЧКИ</h2>
             </div>
             <div class="content-panel">
                 <h3>Меридиан-Прайм</h3>
                 <p>Торговое сердце Грани. Многоуровневая станция-кольцо диаметром <span class="highlight">15 километров</span>, вращающаяся вокруг чёрной дыры класса «Карлик».</p>
-                
+                <p><strong>Верхние уровни:</strong> Стерильные залы сделок, голографические биржи.<br>
+                <strong>Средние уровни:</strong> Торговые ряды, доки, ремонтные базы.<br>
+                <strong>Нижние уровни («Дно»):</strong> Чёрный рынок, нелегальные доки.</p>
+
                 <div class="warning-box">
                     В Поясе «Шёпот» зафиксированы фантомные сигналы. Не доверяйте приборам. Доверяйте глазам.
                 </div>
 
                 <h3>Пояс «Шёпот»</h3>
-                <p>Астероидное поле с аномальной гравитацией. Богато на Ксенит и Эфирит. Сканеры здесь работают с помехами.</p>
+                <p>Астероидное поле с <span class="highlight">аномальной гравитацией</span>. Богато на Ксенит и Эфирит. Сканеры здесь работают с помехами.</p>
+
+                <h3>Станция «Последний Шанс»</h3>
+                <p>Заброшенный <span class="highlight">военный форпост</span> на самой границе изученного космоса. Нейтральная территория, где не действуют законы Консорциума.</p>
             </div>
         </div>
     </div>
 
-    <!-- AUDIO PANEL -->
     <div class="audio-panel">
         <button class="play-btn" id="playBtn" onclick="toggleAudio()">▶</button>
         <div class="audio-info">
@@ -596,12 +595,12 @@
         function updateAudioTitle(chapterId) {
             const titles = {
                 'intro': 'Модуль 01: Добро пожаловать на Грань',
-                'history': 'Модуль 02: Хроники Освоения',
-                'economy': 'Модуль 03: Экономическая Система',
-                'resources': 'Модуль 04: Минеральные Ресурсы',
+                'history': 'Модуль 02: Эпоха Великого Сжатия',
+                'economy': 'Модуль 03: Энергетический кредит',
+                'resources': 'Модуль 04: Минеральные ресурсы',
                 'factions': 'Модуль 05: Фракции Грани',
-                'slang': 'Модуль 06: Шахтёрский Сленг',
-                'locations': 'Модуль 07: Ключевые Локации'
+                'slang': 'Модуль 06: Шахтёрский сленг',
+                'locations': 'Модуль 07: Стратегические точки'
             };
             document.getElementById('audioTitle').innerText = titles[chapterId] || 'Текст главы';
         }
@@ -661,14 +660,14 @@
                 russianVoices.forEach((voice, index) => {
                     const option = document.createElement('option');
                     option.value = voices.indexOf(voice);
-                    option.text = '🇷🇺 ' + voice.name + ' (' + voice.lang + ')';
+                    option.text = '🇷 ' + voice.name + ' (' + voice.lang + ')';
                     select.appendChild(option);
                 });
                 const otherVoices = voices.filter(v => !v.lang.includes('ru'));
                 otherVoices.forEach((voice) => {
                     const option = document.createElement('option');
                     option.value = voices.indexOf(voice);
-                    option.text = '🌍 ' + voice.name + ' (' + voice.lang + ')';
+                    option.text = ' ' + voice.name + ' (' + voice.lang + ')';
                     select.appendChild(option);
                 });
                 if (russianVoices.length > 0) {
