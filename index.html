@@ -261,7 +261,7 @@
 
         .main-container {
             max-width: 1400px; margin: 0 auto;
-            padding: 155px 20px 100px;
+            padding: 175px 20px 100px;
         }
 
         .chapter-header {
@@ -664,15 +664,15 @@
         @media (max-width: 768px) {
             .header { 
                 flex-direction: column; 
-                gap: 6px; 
-                padding: 8px 12px;
+                gap: 4px; 
+                padding: 6px 12px;
                 align-items: flex-start;
             }
             .header-stats { display: none; }
             .project-info h1 { font-size: 1.1rem; }
             .project-info .subtitle { font-size: 0.6rem; }
-            .nav-tabs { top: 85px; }
-            .main-container { padding: 160px 15px 140px; }
+            .nav-tabs { top: 72px; }
+            .main-container { padding: 135px 15px 140px; }
             .chapter-title { font-size: 1.3rem; }
             .content-panel { padding: 20px; }
             .resource-grid { grid-template-columns: 1fr; }
@@ -1158,7 +1158,7 @@
                 russianVoices.forEach((voice, index) => {
                     const option = document.createElement('option');
                     option.value = voices.indexOf(voice);
-                    option.text = '🇷🇺 ' + voice.name + ' (' + voice.lang + ')';
+                    option.text = '🇺 ' + voice.name + ' (' + voice.lang + ')';
                     select.appendChild(option);
                 });
                 const otherVoices = voices.filter(v => !v.lang.includes('ru'));
