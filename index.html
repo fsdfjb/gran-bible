@@ -102,7 +102,9 @@
         .rule-box { background: rgba(255, 51, 51, 0.05); border: 1px dashed var(--accent-red); padding: 15px; margin: 15px 0; font-family: var(--font-mono); color: var(--text-primary); }
         .rule-box strong { color: var(--accent-red); }
 
-        .tech-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-family: var(--font-mono); font-size: 0.85rem; }
+        .tech-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-family: var(--font-mono); font-size: 0.85rem; display: block; overflow-x: auto; }
+        .tech-table thead { display: table; width: 100%; table-layout: fixed; }
+        .tech-table tbody { display: table; width: 100%; table-layout: fixed; }
         .tech-table th, .tech-table td { padding: 12px; text-align: left; border: 1px solid var(--border-color); }
         .tech-table th { background: rgba(255, 149, 0, 0.1); color: var(--accent-orange); text-transform: uppercase; letter-spacing: 1px; font-size: 0.75rem; }
         .tech-table tr:hover { background: rgba(255, 149, 0, 0.05); transition: background 0.3s; }
@@ -117,7 +119,7 @@
 
         .warning-box { background: rgba(255, 51, 51, 0.1); border: 1px solid var(--accent-red); border-left: 4px solid var(--accent-red); padding: 20px; margin: 20px 0; font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-red); animation: warningPulse 2s ease-in-out infinite; }
         @keyframes warningPulse { 0%, 100% { box-shadow: 0 0 10px rgba(255, 51, 51, 0.3); } 50% { box-shadow: 0 0 20px rgba(255, 51, 51, 0.6); } }
-        .warning-box::before { content: '⚠ ВНИМАНИЕ: '; font-weight: bold; }
+        .warning-box::before { content: ' ВНИМАНИЕ: '; font-weight: bold; }
         .quote-block { background: var(--bg-darker); border-left: 4px solid var(--accent-cyan); padding: 20px; margin: 20px 0; font-style: italic; color: var(--text-secondary); }
         .quote-author { text-align: right; color: var(--accent-orange); font-style: normal; font-size: 0.85rem; margin-top: 10px; font-family: var(--font-mono); }
 
@@ -169,6 +171,7 @@
             .nav-tab { padding: 6px 12px; font-size: 0.65rem; }
             .main-container { padding: 125px 15px 140px; }
             .chapter-title { font-size: 1.3rem; } .content-panel { padding: 20px; }
+            .content-panel p { text-align: left; }
             .resource-grid { grid-template-columns: 1fr; }
             .audio-panel { flex-wrap: wrap; padding: 10px; gap: 8px; } .voice-select { max-width: 120px; }
             .lore-image { max-width: 100%; }
@@ -176,6 +179,8 @@
             .coin-item { min-width: 100%; max-width: 100%; } .coin-item img { max-width: 100%; }
             .audio-controls { width: 100%; justify-content: space-between; } .control-slider { width: 60px; }
             .hud-radar { bottom: 110px; right: 10px; } .radar { width: 65px; height: 65px; } .radar-center { width: 4px; height: 4px; } .radar-target { width: 2px; height: 2px; } .radar-label { font-size: 0.45rem; padding: 2px 5px; letter-spacing: 1px; }
+            .tech-table { font-size: 0.75rem; }
+            .tech-table th, .tech-table td { padding: 8px; white-space: nowrap; }
         }
     </style>
 </head>
@@ -269,10 +274,23 @@
                     <div class="coin-item"><img src="img/helion-coin-front.jpg" alt="Гелион - лицевая сторона"><div class="image-caption">☉ Лицевая сторона: солнце-реактор, номинал 1 MWh, серийный номер ГЛН-0001</div></div>
                     <div class="coin-item"><img src="img/helion-coin-back.jpg" alt="Гелион - обратная сторона"><div class="image-caption">⚖️ Обратная сторона: эмблема Консорциума «Меридиан», год 2147, голографическая защита</div></div>
                 </div>
+                
+                <h3>Эон — доступ к глубокому космосу</h3>
+                <p><span class="highlight">Эон</span> — это не валюта, а <strong>лицензия времени</strong>. Карта доступа, дающая право на 30 дней пребывания в глубоком космосе за пределами безопасных зон. Без действующего Эона варп-двигатели блокируются, а корабль автоматически возвращается в ближайший порт.</p>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="img/eon-card.jpg" alt="Карта Эон" class="lore-image" style="max-width: 600px;">
+                    <div class="image-caption">Карта «Эон» — 30 дней доступа к глубокому космосу, стоимость 5000 ГЛН</div>
+                </div>
+                
                 <table class="tech-table">
                     <thead><tr><th>ВАЛЮТА</th><th>ОБОЗНАЧЕНИЕ</th><th>ОБЕСПЕЧЕНИЕ</th><th>КУРС</th></tr></thead>
-                    <tbody><tr><td><strong>Гелион</strong></td><td>ГЛН ☉</td><td>1 мегаватт-час энергии</td><td>Базовая валюта</td></tr><tr><td><strong>Эон</strong></td><td>30 дней</td><td>Доступ к глубокому космосу</td><td>5000 ГЛН</td></tr></tbody>
+                    <tbody>
+                        <tr><td><strong>Гелион</strong></td><td>ГЛН ☉</td><td>1 мегаватт-час энергии</td><td>Базовая валюта</td></tr>
+                        <tr><td><strong>Эон</strong></td><td>30 дней</td><td>Доступ к глубокому космосу</td><td>5000 ГЛН</td></tr>
+                    </tbody>
                 </table>
+                
                 <h3>Гелион — кровь экономики</h3>
                 <p>Один <span class="highlight">Гелион</span> равен одному часу работы стандартного реактора класса «Прометей». Это реальная энергия, которую можно потратить на поддержку жизнеобеспечения станции или запуск варп-двигателя.</p>
                 <div class="warning-box">Эон не накапливается. Неиспользованные дни сгорают. Покупайте только когда готовы к глубокому космосу.</div>
@@ -380,7 +398,7 @@
                 <h3>Истинная природа Эфирита</h3>
                 <p>Эфирит — это не руда. Это <span class="highlight" style="color: var(--accent-purple);">биологическая ткань</span> древней цивилизации. Концентрат их сознания. Когда шахтёры добывают его, они буквально откалывают куски чужого разума. Именно поэтому те, кто долго работает с Эфиритом, начинают слышать «Шёпот».</p>
                 <h3>Протокол «Возвращение»</h3>
-                <p>Древние не умерли. Они ушли в гиперпространство, оставив Сеть как маяк. Протокол «Возвращение» — это не приглашение. Это <span class="highlight" style="color: var(--accent-red);">система жизнеобеспечения</span>. Когда Сеть активируется полностью, она перезапишет локальную реальность, вернув Грань в состояние, пригодное для Древних. Цена? Всё органическое життя на Грани будет использовано как биотопливо для перехода.</p>
+                <p>Древние не умерли. Они ушли в гиперпространство, оставив Сеть как маяк. Протокол «Возвращение» — это не приглашение. Это <span class="highlight" style="color: var(--accent-red);">система жизнеобеспечения</span>. Когда Сеть активируется полностью, она перезапишет локальную реальность, вернув Грань в состояние, пригодное для Древних. Цена? Всё органическое житьё на Грани будет использовано как биотопливо для перехода.</p>
                 <div class="warning-box" style="border-color: var(--accent-purple); color: var(--accent-purple); animation: none;">ЗАПИСЬ БОРТИНГА: "Я помню их уход. Они боялись не войны. Они боялись того, что создали. Сеть — это не спасение. Это голод."</div>
             </div>
         </div>
