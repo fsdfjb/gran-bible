@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0a0e1a">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>ODYSSEY: ГРАНЬ | КОДЕКС ПОГРАНИЧНЫХ ТЕРРИТОРИЙ v2.0</title>
+    <title>ODYSSEY: ГРАНЬ | КОДЕКС ПОГРАНИЧНЫХ ТЕРРИТОРИЙ v2.1</title>
     <link rel="manifest" href="manifest.json">
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%230a0e1a' stroke='%23ff9500' stroke-width='2'/%3E%3Ctext x='16' y='21' font-family='monospace' font-size='16' fill='%23ff9500' text-anchor='middle'%3E☉%3C/text%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Ccircle cx='90' cy='90' r='80' fill='%230a0e1a' stroke='%23ff9500' stroke-width='4'/%3E%3Ctext x='90' y='115' font-family='monospace' font-size='90' fill='%23ff9500' text-anchor='middle'%3E☉%3C/text%3E%3C/svg%3E">
     
     <style>
         :root {
@@ -19,6 +18,7 @@
             --accent-orange: #ff9500;
             --accent-yellow: #ffb347;
             --accent-cyan: #00d9ff;
+            --accent-purple: #b026ff;
             --accent-green: #00ff88;
             --accent-red: #ff3333;
             --text-primary: #e0e0e0;
@@ -40,726 +40,131 @@
             min-height: 100vh;
         }
 
-        #starfield {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-        }
+        #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; }
+        .grid-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255, 149, 0, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 149, 0, 0.04) 1px, transparent 1px); background-size: 50px 50px; pointer-events: none; z-index: -1; }
+        .scanlines { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.15)); background-size: 100% 3px; pointer-events: none; z-index: 9999; opacity: 0.3; }
+        .scan-line { position: fixed; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent); opacity: 0.4; z-index: 9998; animation: scanMove 8s linear infinite; pointer-events: none; }
+        @keyframes scanMove { 0% { top: 0; } 100% { top: 100vh; } }
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; }
+        .particle { position: absolute; width: 2px; height: 2px; background: var(--accent-orange); border-radius: 50%; opacity: 0; animation: particleFloat 15s infinite; }
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; } .particle:nth-child(2) { left: 30%; animation-delay: 3s; } .particle:nth-child(3) { left: 50%; animation-delay: 6s; } .particle:nth-child(4) { left: 70%; animation-delay: 9s; } .particle:nth-child(5) { left: 90%; animation-delay: 12s; }
+        @keyframes particleFloat { 0% { top: 100vh; opacity: 0; } 10% { opacity: 0.6; } 90% { opacity: 0.6; } 100% { top: -10px; opacity: 0; } }
 
-        .grid-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(255, 149, 0, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 149, 0, 0.04) 1px, transparent 1px);
-            background-size: 50px 50px;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .scanlines {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.15));
-            background-size: 100% 3px;
-            pointer-events: none; z-index: 9999; opacity: 0.3;
-        }
-
-        .scan-line {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
-            opacity: 0.4;
-            z-index: 9998;
-            animation: scanMove 8s linear infinite;
-            pointer-events: none;
-        }
-
-        @keyframes scanMove {
-            0% { top: 0; }
-            100% { top: 100vh; }
-        }
-
-        .particles {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            overflow: hidden;
-        }
-
-        .particle {
-            position: absolute;
-            width: 2px; height: 2px;
-            background: var(--accent-orange);
-            border-radius: 50%;
-            opacity: 0;
-            animation: particleFloat 15s infinite;
-        }
-
-        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
-        .particle:nth-child(2) { left: 30%; animation-delay: 3s; }
-        .particle:nth-child(3) { left: 50%; animation-delay: 6s; }
-        .particle:nth-child(4) { left: 70%; animation-delay: 9s; }
-        .particle:nth-child(5) { left: 90%; animation-delay: 12s; }
-
-        @keyframes particleFloat {
-            0% { top: 100vh; opacity: 0; }
-            10% { opacity: 0.6; }
-            90% { opacity: 0.6; }
-            100% { top: -10px; opacity: 0; }
-        }
-
-        .header {
-            background: var(--bg-darker);
-            border-bottom: 2px solid var(--accent-orange);
-            padding: 8px 20px;
-            position: fixed; top: 0; left: 0; right: 0;
-            z-index: 1000;
-            display: flex; justify-content: space-between; align-items: center;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            height: 60px;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 149, 0, 0.3), transparent);
-            animation: energyFlow 4s ease-in-out infinite;
-        }
-
-        @keyframes energyFlow {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
+        .header { background: var(--bg-darker); border-bottom: 2px solid var(--accent-orange); padding: 8px 20px; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; overflow: hidden; backdrop-filter: blur(10px); height: 60px; }
+        .header::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 149, 0, 0.3), transparent); animation: energyFlow 4s ease-in-out infinite; }
+        @keyframes energyFlow { 0% { left: -100%; } 100% { left: 100%; } }
         .header-left { display: flex; align-items: center; gap: 12px; position: relative; z-index: 1; }
-        
-        .logo {
-            width: 36px; height: 36px;
-            border: 2px solid var(--accent-orange);
-            background: rgba(255, 149, 0, 0.1);
-            display: flex; align-items: center; justify-content: center;
-            font-family: var(--font-mono); font-size: 1.3rem; color: var(--accent-orange);
-            flex-shrink: 0;
-            animation: logoPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes logoPulse {
-            0%, 100% { box-shadow: 0 0 10px rgba(255, 149, 0, 0.5); }
-            50% { box-shadow: 0 0 20px rgba(255, 149, 0, 0.8); }
-        }
-
-        .project-info h1 {
-            font-family: var(--font-mono); font-size: 1.2rem; color: var(--text-primary);
-            letter-spacing: 3px; text-transform: uppercase;
-        }
-
-        .project-info .subtitle {
-            font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-secondary);
-            letter-spacing: 2px; margin-top: 1px;
-        }
-
-        .header-stats {
-            display: flex; gap: 20px;
-            font-family: var(--font-mono); font-size: 0.85rem;
-            position: relative; z-index: 1;
-        }
-
+        .logo { width: 36px; height: 36px; border: 2px solid var(--accent-orange); background: rgba(255, 149, 0, 0.1); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 1.3rem; color: var(--accent-orange); flex-shrink: 0; animation: logoPulse 2s ease-in-out infinite; }
+        @keyframes logoPulse { 0%, 100% { box-shadow: 0 0 10px rgba(255, 149, 0, 0.5); } 50% { box-shadow: 0 0 20px rgba(255, 149, 0, 0.8); } }
+        .project-info h1 { font-family: var(--font-mono); font-size: 1.2rem; color: var(--text-primary); letter-spacing: 3px; text-transform: uppercase; }
+        .project-info .subtitle { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-secondary); letter-spacing: 2px; margin-top: 1px; }
+        .header-stats { display: flex; gap: 20px; font-family: var(--font-mono); font-size: 0.85rem; position: relative; z-index: 1; }
         .stat-item { display: flex; flex-direction: column; gap: 3px; }
         .stat-label { color: var(--text-muted); font-size: 0.65rem; text-transform: uppercase; }
         .stat-value { color: var(--accent-orange); font-weight: bold; font-size: 0.95rem; }
+        .status-badge { background: rgba(0, 255, 136, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); padding: 5px 15px; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; position: relative; }
+        .status-badge::before { content: ''; position: absolute; left: -12px; top: 50%; transform: translateY(-50%); width: 6px; height: 6px; background: var(--accent-green); border-radius: 50%; animation: blink 1.5s ease-in-out infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        .status-badge {
-            background: rgba(0, 255, 136, 0.1);
-            border: 1px solid var(--accent-green);
-            color: var(--accent-green);
-            padding: 5px 15px;
-            font-family: var(--font-mono); font-size: 0.7rem;
-            letter-spacing: 2px; text-transform: uppercase;
-            position: relative;
-        }
-
-        .status-badge::before {
-            content: '';
-            position: absolute;
-            left: -12px; top: 50%;
-            transform: translateY(-50%);
-            width: 6px; height: 6px;
-            background: var(--accent-green);
-            border-radius: 50%;
-            animation: blink 1.5s ease-in-out infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .nav-tabs {
-            position: fixed; top: 60px; left: 0; right: 0;
-            background: var(--bg-darker);
-            border-bottom: 2px solid transparent;
-            padding: 0 20px;
-            z-index: 999;
-            display: flex; gap: 5px;
-            overflow-x: auto;
-            backdrop-filter: blur(10px);
-            height: 45px;
-            align-items: center;
-        }
-
-        .nav-tabs::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, 
-                var(--accent-cyan), 
-                var(--accent-orange), 
-                var(--accent-cyan));
-            background-size: 200% 100%;
-            animation: navLineFlow 3s linear infinite;
-            box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
-        }
-
-        @keyframes navLineFlow {
-            0% { background-position: 0% 0%; }
-            100% { background-position: 200% 0%; }
-        }
-
-        .nav-tab {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            border-bottom: none;
-            color: var(--text-secondary);
-            padding: 8px 16px;
-            font-family: var(--font-mono); font-size: 0.72rem;
-            cursor: pointer; transition: all 0.3s;
-            text-transform: uppercase; letter-spacing: 2px;
-            position: relative;
-            white-space: nowrap;
-        }
-
-        .nav-tab::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-            background: var(--accent-orange);
-            transform: scaleX(0); transition: transform 0.3s;
-        }
-
-        .nav-tab:hover { 
-            color: var(--accent-orange); 
-            border-color: var(--accent-orange);
-            box-shadow: 0 0 15px rgba(255, 149, 0, 0.3);
-        }
-        
-        .nav-tab.active {
-            color: var(--accent-orange);
-            background: rgba(255, 149, 0, 0.05);
-            border-color: var(--accent-orange);
-            animation: tabGlow 2s ease-in-out infinite;
-        }
-        
+        .nav-tabs { position: fixed; top: 60px; left: 0; right: 0; background: var(--bg-darker); border-bottom: 2px solid transparent; padding: 0 20px; z-index: 999; display: flex; gap: 5px; overflow-x: auto; backdrop-filter: blur(10px); height: 45px; align-items: center; }
+        .nav-tabs::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-orange), var(--accent-cyan)); background-size: 200% 100%; animation: navLineFlow 3s linear infinite; box-shadow: 0 0 10px rgba(0, 217, 255, 0.5); }
+        @keyframes navLineFlow { 0% { background-position: 0% 0%; } 100% { background-position: 200% 0%; } }
+        .nav-tab { background: transparent; border: 1px solid var(--border-color); border-bottom: none; color: var(--text-secondary); padding: 8px 16px; font-family: var(--font-mono); font-size: 0.72rem; cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 2px; position: relative; white-space: nowrap; }
+        .nav-tab::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent-orange); transform: scaleX(0); transition: transform 0.3s; }
+        .nav-tab:hover { color: var(--accent-orange); border-color: var(--accent-orange); box-shadow: 0 0 15px rgba(255, 149, 0, 0.3); }
+        .nav-tab.active { color: var(--accent-orange); background: rgba(255, 149, 0, 0.05); border-color: var(--accent-orange); animation: tabGlow 2s ease-in-out infinite; }
         .nav-tab.active::before { transform: scaleX(1); }
+        @keyframes tabGlow { 0%, 100% { box-shadow: 0 0 10px rgba(255, 149, 0, 0.3); } 50% { box-shadow: 0 0 20px rgba(255, 149, 0, 0.6); } }
 
-        @keyframes tabGlow {
-            0%, 100% { box-shadow: 0 0 10px rgba(255, 149, 0, 0.3); }
-            50% { box-shadow: 0 0 20px rgba(255, 149, 0, 0.6); }
-        }
+        .main-container { max-width: 1400px; margin: 0 auto; padding: 130px 20px 100px; }
+        .chapter-header { background: var(--bg-panel); border: 1px solid var(--border-color); border-left: 4px solid var(--accent-orange); padding: 30px; margin-bottom: 30px; position: relative; animation: borderPulse 3s ease-in-out infinite; backdrop-filter: blur(5px); }
+        @keyframes borderPulse { 0%, 100% { border-left-color: var(--accent-orange); } 50% { border-left-color: var(--accent-yellow); } }
+        .chapter-header::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(0deg, rgba(255, 149, 0, 0.03), rgba(255, 149, 0, 0.03) 1px, transparent 1px, transparent 2px); pointer-events: none; }
+        .chapter-number { font-family: var(--font-mono); color: var(--accent-orange); font-size: 0.9rem; letter-spacing: 3px; margin-bottom: 10px; position: relative; z-index: 1; }
+        .chapter-title { font-family: var(--font-mono); font-size: 2rem; color: var(--text-primary); text-transform: uppercase; letter-spacing: 5px; position: relative; z-index: 1; }
 
-        .main-container {
-            max-width: 1400px; margin: 0 auto;
-            padding: 130px 20px 100px;
-        }
+        .content-panel { background: var(--bg-panel); border: 1px solid var(--border-color); padding: 30px; margin-bottom: 20px; position: relative; backdrop-filter: blur(5px); }
+        .content-panel h3 { font-family: var(--font-mono); color: var(--accent-cyan); font-size: 1.1rem; margin: 25px 0 15px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .content-panel p { margin-bottom: 15px; text-align: justify; color: var(--text-secondary); }
+        .highlight { color: var(--accent-yellow); font-weight: bold; text-shadow: 0 0 10px rgba(255, 179, 71, 0.5); }
+        
+        /* Стили для Архива Древних */
+        .archive-panel { border-left: 4px solid var(--accent-purple); background: rgba(10, 5, 20, 0.9); }
+        .archive-panel h3 { color: var(--accent-purple); border-bottom-color: rgba(176, 38, 255, 0.3); }
+        .glitch-text { animation: glitch 2s infinite; color: var(--accent-cyan); }
+        @keyframes glitch { 0%, 100% { opacity: 1; transform: translate(0); } 20% { opacity: 0.8; transform: translate(-2px, 2px); } 40% { opacity: 0.9; transform: translate(2px, -2px); } }
+        
+        /* Стили для Кодекса Выживания */
+        .survival-panel { border-left: 4px solid var(--accent-red); background: rgba(20, 5, 5, 0.9); }
+        .survival-panel h3 { color: var(--accent-red); border-bottom-color: rgba(255, 51, 51, 0.3); }
+        .rule-box { background: rgba(255, 51, 51, 0.05); border: 1px dashed var(--accent-red); padding: 15px; margin: 15px 0; font-family: var(--font-mono); color: var(--text-primary); }
+        .rule-box strong { color: var(--accent-red); }
 
-        .chapter-header {
-            background: var(--bg-panel);
-            border: 1px solid var(--border-color);
-            border-left: 4px solid var(--accent-orange);
-            padding: 30px;
-            margin-bottom: 30px;
-            position: relative;
-            animation: borderPulse 3s ease-in-out infinite;
-            backdrop-filter: blur(5px);
-        }
+        .tech-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-family: var(--font-mono); font-size: 0.85rem; }
+        .tech-table th, .tech-table td { padding: 12px; text-align: left; border: 1px solid var(--border-color); }
+        .tech-table th { background: rgba(255, 149, 0, 0.1); color: var(--accent-orange); text-transform: uppercase; letter-spacing: 1px; font-size: 0.75rem; }
+        .tech-table tr:hover { background: rgba(255, 149, 0, 0.05); transition: background 0.3s; }
 
-        @keyframes borderPulse {
-            0%, 100% { border-left-color: var(--accent-orange); }
-            50% { border-left-color: var(--accent-yellow); }
-        }
-
-        .chapter-header::after {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(255, 149, 0, 0.03),
-                rgba(255, 149, 0, 0.03) 1px,
-                transparent 1px,
-                transparent 2px
-            ); pointer-events: none;
-        }
-
-        .chapter-number {
-            font-family: var(--font-mono); color: var(--accent-orange);
-            font-size: 0.9rem; letter-spacing: 3px; margin-bottom: 10px;
-            position: relative; z-index: 1;
-        }
-
-        .chapter-title {
-            font-family: var(--font-mono); font-size: 2rem;
-            color: var(--text-primary); text-transform: uppercase;
-            letter-spacing: 5px;
-            position: relative; z-index: 1;
-        }
-
-        .content-panel {
-            background: var(--bg-panel);
-            border: 1px solid var(--border-color);
-            padding: 30px;
-            margin-bottom: 20px;
-            position: relative;
-            backdrop-filter: blur(5px);
-        }
-
-        .content-panel h3 {
-            font-family: var(--font-mono); color: var(--accent-cyan);
-            font-size: 1.1rem; margin: 25px 0 15px;
-            text-transform: uppercase; letter-spacing: 2px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-        }
-
-        .content-panel p {
-            margin-bottom: 15px; text-align: justify;
-            color: var(--text-secondary);
-        }
-
-        .highlight {
-            color: var(--accent-yellow); font-weight: bold;
-            text-shadow: 0 0 10px rgba(255, 179, 71, 0.5);
-        }
-
-        .tech-table {
-            width: 100%; border-collapse: collapse;
-            margin: 20px 0;
-            font-family: var(--font-mono); font-size: 0.85rem;
-        }
-
-        .tech-table th, .tech-table td {
-            padding: 12px; text-align: left;
-            border: 1px solid var(--border-color);
-        }
-
-        .tech-table th {
-            background: rgba(255, 149, 0, 0.1);
-            color: var(--accent-orange);
-            text-transform: uppercase; letter-spacing: 1px;
-            font-size: 0.75rem;
-        }
-
-        .tech-table tr:hover { 
-            background: rgba(255, 149, 0, 0.05);
-            transition: background 0.3s;
-        }
-
-        .resource-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 15px; margin: 20px 0;
-        }
-
-        .resource-card {
-            background: var(--bg-darker);
-            border: 1px solid var(--border-color);
-            border-left: 3px solid var(--accent-orange);
-            padding: 20px;
-            position: relative;
-            transition: all 0.3s;
-        }
-
-        .resource-card:hover {
-            border-color: var(--accent-orange);
-            box-shadow: 0 0 25px rgba(255, 149, 0, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .resource-card.common { border-left-color: var(--text-muted); }
-        .resource-card.rare { border-left-color: var(--accent-cyan); }
-        .resource-card.legendary { border-left-color: var(--accent-yellow); }
-
-        .resource-name {
-            font-family: var(--font-mono); color: var(--text-primary);
-            font-size: 1.1rem; margin-bottom: 5px;
-        }
-
-        .resource-slang {
-            color: var(--accent-orange); font-style: italic;
-            font-family: var(--font-mono); font-size: 0.85rem;
-            margin-bottom: 10px;
-        }
-
+        .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin: 20px 0; }
+        .resource-card { background: var(--bg-darker); border: 1px solid var(--border-color); border-left: 3px solid var(--accent-orange); padding: 20px; position: relative; transition: all 0.3s; }
+        .resource-card:hover { border-color: var(--accent-orange); box-shadow: 0 0 25px rgba(255, 149, 0, 0.3); transform: translateY(-2px); }
+        .resource-card.common { border-left-color: var(--text-muted); } .resource-card.rare { border-left-color: var(--accent-cyan); } .resource-card.legendary { border-left-color: var(--accent-yellow); }
+        .resource-name { font-family: var(--font-mono); color: var(--text-primary); font-size: 1.1rem; margin-bottom: 5px; }
+        .resource-slang { color: var(--accent-orange); font-style: italic; font-family: var(--font-mono); font-size: 0.85rem; margin-bottom: 10px; }
         .resource-desc { color: var(--text-secondary); font-size: 0.9rem; }
 
-        .warning-box {
-            background: rgba(255, 51, 51, 0.1);
-            border: 1px solid var(--accent-red);
-            border-left: 4px solid var(--accent-red);
-            padding: 20px; margin: 20px 0;
-            font-family: var(--font-mono); font-size: 0.85rem;
-            color: var(--accent-red);
-            animation: warningPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes warningPulse {
-            0%, 100% { box-shadow: 0 0 10px rgba(255, 51, 51, 0.3); }
-            50% { box-shadow: 0 0 20px rgba(255, 51, 51, 0.6); }
-        }
-
+        .warning-box { background: rgba(255, 51, 51, 0.1); border: 1px solid var(--accent-red); border-left: 4px solid var(--accent-red); padding: 20px; margin: 20px 0; font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-red); animation: warningPulse 2s ease-in-out infinite; }
+        @keyframes warningPulse { 0%, 100% { box-shadow: 0 0 10px rgba(255, 51, 51, 0.3); } 50% { box-shadow: 0 0 20px rgba(255, 51, 51, 0.6); } }
         .warning-box::before { content: '⚠ ВНИМАНИЕ: '; font-weight: bold; }
+        .quote-block { background: var(--bg-darker); border-left: 4px solid var(--accent-cyan); padding: 20px; margin: 20px 0; font-style: italic; color: var(--text-secondary); }
+        .quote-author { text-align: right; color: var(--accent-orange); font-style: normal; font-size: 0.85rem; margin-top: 10px; font-family: var(--font-mono); }
 
-        .quote-block {
-            background: var(--bg-darker);
-            border-left: 4px solid var(--accent-cyan);
-            padding: 20px; margin: 20px 0;
-            font-style: italic; color: var(--text-secondary);
-        }
+        .lore-image { width: 100%; max-width: 900px; margin: 30px auto; display: block; border: 2px solid var(--accent-orange); border-radius: 8px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8); cursor: pointer; transition: all 0.3s; }
+        .lore-image:hover { transform: scale(1.02); box-shadow: 0 15px 50px rgba(255, 149, 0, 0.4); }
+        .image-caption { text-align: center; font-style: italic; color: var(--accent-cyan); margin-top: 10px; font-size: 0.9rem; font-family: var(--font-mono); }
 
-        .quote-author {
-            text-align: right; color: var(--accent-orange);
-            font-style: normal; font-size: 0.85rem;
-            margin-top: 10px; font-family: var(--font-mono);
-        }
+        .hud-radar { position: fixed; bottom: 100px; right: 15px; z-index: 999; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
+        .radar { width: 100px; height: 100px; border: 2px solid var(--accent-cyan); border-radius: 50%; background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, rgba(0, 0, 0, 0.7) 100%); position: relative; overflow: hidden; box-shadow: 0 0 20px rgba(0, 217, 255, 0.3); backdrop-filter: blur(5px); }
+        .radar::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 66%; height: 66%; border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 50%; }
+        .radar::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 33%; height: 33%; border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 50%; }
+        .radar-sweep { position: absolute; top: 50%; left: 50%; width: 50%; height: 2px; background: linear-gradient(90deg, var(--accent-cyan), transparent); transform-origin: left center; animation: radarRotate 3s linear infinite; }
+        @keyframes radarRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .radar-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 5px; height: 5px; background: var(--accent-cyan); border-radius: 50%; box-shadow: 0 0 10px var(--accent-cyan); }
+        .radar-target { position: absolute; width: 3px; height: 3px; background: var(--accent-red); border-radius: 50%; box-shadow: 0 0 8px var(--accent-red); animation: targetBlink 1s ease-in-out infinite; }
+        .radar-target:nth-child(4) { top: 30%; left: 60%; animation-delay: 0s; } .radar-target:nth-child(5) { top: 65%; left: 35%; animation-delay: 0.3s; } .radar-target:nth-child(6) { top: 45%; left: 75%; animation-delay: 0.6s; }
+        @keyframes targetBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .radar-label { font-family: var(--font-mono); font-size: 0.55rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 2px; text-align: center; background: rgba(0, 0, 0, 0.7); padding: 3px 8px; border-radius: 3px; border: 1px solid rgba(0, 217, 255, 0.3); }
 
-        .lore-image {
-            width: 100%;
-            max-width: 900px;
-            margin: 30px auto;
-            display: block;
-            border: 2px solid var(--accent-orange);
-            border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .lore-image:hover {
-            transform: scale(1.02);
-            box-shadow: 0 15px 50px rgba(255, 149, 0, 0.4);
-        }
-
-        .image-caption {
-            text-align: center;
-            font-style: italic;
-            color: var(--accent-cyan);
-            margin-top: 10px;
-            font-size: 0.9rem;
-            font-family: var(--font-mono);
-        }
-
-        .coin-showcase {
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            margin: 30px 0;
-            padding: 20px;
-            background: var(--bg-darker);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-        }
-
-        .coin-item {
-            flex: 1;
-            min-width: 280px;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .coin-item img {
-            width: 100%;
-            max-width: 380px;
-            border: 2px solid var(--accent-orange);
-            border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .coin-item img:hover {
-            transform: scale(1.03);
-            box-shadow: 0 15px 50px rgba(255, 149, 0, 0.4);
-        }
-
-        .coin-item .image-caption {
-            margin-top: 12px;
-            font-size: 0.85rem;
-        }
-
-        .hud-radar {
-            position: fixed;
-            bottom: 100px;
-            right: 15px;
-            z-index: 999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            pointer-events: none;
-        }
-
-        .radar {
-            width: 100px;
-            height: 100px;
-            border: 2px solid var(--accent-cyan);
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, rgba(0, 0, 0, 0.7) 100%);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
-            backdrop-filter: blur(5px);
-        }
-
-        .radar::before {
-            content: '';
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 66%; height: 66%;
-            border: 1px solid rgba(0, 217, 255, 0.3);
-            border-radius: 50%;
-        }
-
-        .radar::after {
-            content: '';
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 33%; height: 33%;
-            border: 1px solid rgba(0, 217, 255, 0.3);
-            border-radius: 50%;
-        }
-
-        .radar-sweep {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 50%; height: 2px;
-            background: linear-gradient(90deg, var(--accent-cyan), transparent);
-            transform-origin: left center;
-            animation: radarRotate 3s linear infinite;
-        }
-
-        @keyframes radarRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .radar-center {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 5px; height: 5px;
-            background: var(--accent-cyan);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--accent-cyan);
-        }
-
-        .radar-target {
-            position: absolute;
-            width: 3px; height: 3px;
-            background: var(--accent-red);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent-red);
-            animation: targetBlink 1s ease-in-out infinite;
-        }
-
-        .radar-target:nth-child(4) { top: 30%; left: 60%; animation-delay: 0s; }
-        .radar-target:nth-child(5) { top: 65%; left: 35%; animation-delay: 0.3s; }
-        .radar-target:nth-child(6) { top: 45%; left: 75%; animation-delay: 0.6s; }
-
-        @keyframes targetBlink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .radar-label {
-            font-family: var(--font-mono);
-            font-size: 0.55rem;
-            color: var(--accent-cyan);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 3px 8px;
-            border-radius: 3px;
-            border: 1px solid rgba(0, 217, 255, 0.3);
-        }
-
-        .audio-panel {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: var(--bg-darker);
-            border-top: 2px solid var(--accent-orange);
-            padding: 15px 20px;
-            z-index: 1000;
-            display: flex; align-items: center; gap: 15px;
-            backdrop-filter: blur(10px);
-            background-image: 
-                linear-gradient(45deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-                linear-gradient(-45deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-                radial-gradient(circle, rgba(255, 149, 0, 0.08) 1px, transparent 1px);
-            background-size: 8px 8px, 8px 8px, 6px 6px;
-            background-position: 0 0, 0 0, 3px 3px;
-        }
-
-        .audio-panel::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 149, 0, 0.5), transparent);
-            pointer-events: none;
-        }
-
-        .play-btn {
-            background: var(--accent-orange);
-            border: none; color: var(--bg-dark);
-            width: 40px; height: 40px;
-            font-size: 1.2rem; cursor: pointer;
-            font-family: var(--font-mono);
-            transition: all 0.3s;
-            position: relative;
-            z-index: 1;
-        }
-
-        .play-btn:hover {
-            box-shadow: 0 0 20px rgba(255, 149, 0, 0.6);
-            transform: scale(1.1);
-        }
-
+        .audio-panel { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-darker); border-top: 2px solid var(--accent-orange); padding: 15px 20px; z-index: 1000; display: flex; align-items: center; gap: 15px; backdrop-filter: blur(10px); background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px), linear-gradient(-45deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px), radial-gradient(circle, rgba(255, 149, 0, 0.08) 1px, transparent 1px); background-size: 8px 8px, 8px 8px, 6px 6px; background-position: 0 0, 0 0, 3px 3px; }
+        .audio-panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 149, 0, 0.5), transparent); pointer-events: none; }
+        .play-btn { background: var(--accent-orange); border: none; color: var(--bg-dark); width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer; font-family: var(--font-mono); transition: all 0.3s; position: relative; z-index: 1; }
+        .play-btn:hover { box-shadow: 0 0 20px rgba(255, 149, 0, 0.6); transform: scale(1.1); }
         .audio-info { flex: 1; font-family: var(--font-mono); font-size: 0.8rem; position: relative; z-index: 1; }
-        .audio-title { color: var(--accent-yellow); }
-        .audio-status { color: var(--text-muted); font-size: 0.7rem; }
-
-        .voice-label {
-            color: var(--accent-cyan); font-family: var(--font-mono);
-            font-size: 0.7rem; text-transform: uppercase;
-            margin-right: 8px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .voice-select {
-            background: var(--bg-dark);
-            border: 1px solid var(--border-color);
-            color: var(--accent-cyan);
-            padding: 5px 10px;
-            font-family: var(--font-mono); font-size: 0.75rem;
-            cursor: pointer; max-width: 200px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .audio-controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-        }
-
-        .control-label {
-            color: var(--text-muted);
-            font-family: var(--font-mono);
-            font-size: 0.65rem;
-            text-transform: uppercase;
-        }
-
-        .control-slider {
-            width: 80px;
-            height: 4px;
-            background: var(--border-color);
-            border-radius: 2px;
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        .control-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 12px;
-            height: 12px;
-            background: var(--accent-cyan);
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .progress-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 3px;
-            background: var(--accent-orange);
-            transition: width 0.3s;
-            z-index: 2;
-        }
+        .audio-title { color: var(--accent-yellow); } .audio-status { color: var(--text-muted); font-size: 0.7rem; }
+        .voice-label { color: var(--accent-cyan); font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; margin-right: 8px; position: relative; z-index: 1; }
+        .voice-select { background: var(--bg-dark); border: 1px solid var(--border-color); color: var(--accent-cyan); padding: 5px 10px; font-family: var(--font-mono); font-size: 0.75rem; cursor: pointer; max-width: 200px; position: relative; z-index: 1; }
+        .audio-controls { display: flex; gap: 10px; align-items: center; position: relative; z-index: 1; }
+        .control-label { color: var(--text-muted); font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; }
+        .control-slider { width: 80px; height: 4px; background: var(--border-color); border-radius: 2px; outline: none; -webkit-appearance: none; }
+        .control-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: var(--accent-cyan); border-radius: 50%; cursor: pointer; }
+        .progress-bar { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--accent-orange); transition: width 0.3s; z-index: 2; }
 
         .chapter { display: none; }
-        .chapter.active { 
-            display: block; 
-            animation: chapterIn 0.6s ease-out;
-        }
-
-        @keyframes chapterIn {
-            0% { opacity: 0; transform: translateY(20px); filter: blur(5px); }
-            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
-        }
+        .chapter.active { display: block; animation: chapterIn 0.6s ease-out; }
+        @keyframes chapterIn { 0% { opacity: 0; transform: translateY(20px); filter: blur(5px); } 100% { opacity: 1; transform: translateY(0); filter: blur(0); } }
 
         @media (max-width: 768px) {
-            .header { 
-                flex-direction: column; 
-                gap: 4px; 
-                padding: 6px 12px;
-                align-items: flex-start;
-                height: auto;
-            }
+            .header { flex-direction: column; gap: 4px; padding: 6px 12px; align-items: flex-start; height: auto; }
             .header-stats { display: none; }
-            .project-info h1 { font-size: 1.1rem; }
-            .project-info .subtitle { font-size: 0.6rem; }
-            .nav-tabs { 
-                top: 72px; 
-                height: auto; 
-                padding: 8px 20px;
-            }
+            .project-info h1 { font-size: 1.1rem; } .project-info .subtitle { font-size: 0.6rem; }
+            .nav-tabs { top: 72px; height: auto; padding: 8px 20px; }
             .main-container { padding: 135px 15px 140px; }
-            .chapter-title { font-size: 1.3rem; }
-            .content-panel { padding: 20px; }
+            .chapter-title { font-size: 1.3rem; } .content-panel { padding: 20px; }
             .resource-grid { grid-template-columns: 1fr; }
-            .audio-panel { flex-wrap: wrap; padding: 10px; gap: 8px; }
-            .voice-select { max-width: 120px; }
+            .audio-panel { flex-wrap: wrap; padding: 10px; gap: 8px; } .voice-select { max-width: 120px; }
             .lore-image { max-width: 100%; }
-            .coin-showcase { flex-direction: column; align-items: center; gap: 20px; padding: 15px; }
-            .coin-item { min-width: 100%; max-width: 100%; }
-            .coin-item img { max-width: 100%; }
-            .audio-controls { width: 100%; justify-content: space-between; }
-            .control-slider { width: 60px; }
-            
-            .hud-radar { bottom: 110px; right: 10px; }
-            .radar { width: 65px; height: 65px; }
-            .radar-center { width: 4px; height: 4px; }
-            .radar-target { width: 2px; height: 2px; }
-            .radar-label { font-size: 0.45rem; padding: 2px 5px; letter-spacing: 1px; }
+            .audio-controls { width: 100%; justify-content: space-between; } .control-slider { width: 60px; }
+            .hud-radar { bottom: 110px; right: 10px; } .radar { width: 65px; height: 65px; } .radar-center { width: 4px; height: 4px; } .radar-target { width: 2px; height: 2px; } .radar-label { font-size: 0.45rem; padding: 2px 5px; letter-spacing: 1px; }
         }
     </style>
 </head>
@@ -768,13 +173,8 @@
     <div class="grid-overlay"></div>
     <div class="scanlines"></div>
     <div class="scan-line"></div>
-    
     <div class="particles">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
     </div>
 
     <header class="header">
@@ -782,26 +182,12 @@
             <div class="logo">☉</div>
             <div class="project-info">
                 <h1>ODYSSEY: ГРАНЬ</h1>
-                <div class="subtitle">КОДЕКС ПОГРАНИЧНЫХ ТЕРРИТОРИЙ v2.0</div>
+                <div class="subtitle">КОДЕКС ПОГРАНИЧНЫХ ТЕРРИТОРИЙ v2.1</div>
             </div>
         </div>
         <div class="header-stats">
-            <div class="stat-item">
-                <div class="stat-label">ГЛАВ</div>
-                <div class="stat-value">7</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">СТРАНИЦ</div>
-                <div class="stat-value">42</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">СЛОВ</div>
-                <div class="stat-value">15K</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">СТАТУС</div>
-                <div class="status-badge">АКТИВЕН</div>
-            </div>
+            <div class="stat-item"><div class="stat-label">ГЛАВ</div><div class="stat-value">10</div></div>
+            <div class="stat-item"><div class="stat-label">СТАТУС</div><div class="status-badge">АКТИВЕН</div></div>
         </div>
     </header>
 
@@ -813,270 +199,190 @@
         <button class="nav-tab" onclick="showChapter('factions')">05 ФРАКЦИИ</button>
         <button class="nav-tab" onclick="showChapter('slang')">06 СЛЕНГ</button>
         <button class="nav-tab" onclick="showChapter('locations')">07 ЛОКАЦИИ</button>
+        <button class="nav-tab" onclick="showChapter('archive')">08 АРХИВ</button>
+        <button class="nav-tab" onclick="showChapter('tech')">09 АРСЕНАЛ</button>
+        <button class="nav-tab" onclick="showChapter('survival')">10 ЗАКОНЫ</button>
     </nav>
 
     <div class="main-container">
+        <!-- 01 ВВЕДЕНИЕ -->
         <div id="intro" class="chapter active">
             <div class="chapter-header">
                 <div class="chapter-number">01 / ДОСТУП РАЗРЕШЁН</div>
                 <h2 class="chapter-title">ДОБРО ПОЖАЛОВАТЬ НА ГРАНЬ</h2>
             </div>
-            
             <div class="content-panel">
                 <p><span class="highlight">СИСТЕМНОЕ СООБЩЕНИЕ:</span> Вы получили доступ к зашифрованному архиву данных о пограничных территориях галактики. Эта информация предназначена только для сертифицированных капитанов.</p>
-                
                 <p><span class="highlight">ГРАНЬ</span> — это не просто регион космоса. Это последняя граница между цивилизацией и хаосом. Здесь, на самом краю известного пространства, заканчиваются законы центральных миров и начинаются правила выживания.</p>
-
                 <img src="img/station-meridian.jpg" alt="Меридиан-Прайм" class="lore-image">
                 <div class="image-caption">Станция «Меридиан-Прайм» — торговое сердце Грани, вращающееся вокруг чёрной дыры</div>
-
-                <div class="quote-block">
-                    Здесь не спрашивают, откуда ты. Спрашивают, сколько у тебя в трюме и не течёт ли реактор.
-                    <div class="quote-author">— Капитан Рен, 2147 год</div>
-                </div>
-
-                <div class="warning-box">
-                    Несанкционированное распространение данных карается конфискацией корабля и аннулированием лицензии капитана.
-                </div>
+                <div class="quote-block">Здесь не спрашивают, откуда ты. Спрашивают, сколько у тебя в трюме и не течёт ли реактор.<div class="quote-author">— Капитан Рен, 2147 год</div></div>
             </div>
         </div>
 
+        <!-- 02 ИСТОРИЯ -->
         <div id="history" class="chapter">
-            <div class="chapter-header">
-                <div class="chapter-number">02 / ХРОНОЛОГИЯ</div>
-                <h2 class="chapter-title">ЭПОХА ВЕЛИКОГО СЖАТИЯ</h2>
-            </div>
+            <div class="chapter-header"><div class="chapter-number">02 / ХРОНОЛОГИЯ</div><h2 class="chapter-title">ЭПОХА ВЕЛИКОГО СЖАТИЯ</h2></div>
             <div class="content-panel">
                 <h3>Изоляция центральных миров</h3>
                 <p>Всё началось три столетия назад, когда центральные миры галактики закрыли свои границы. <span class="highlight">«Великое Сжатие»</span> — так историки назвали период изоляции богатых планет от внешних территорий.</p>
-                
                 <img src="img/galaxy-map.jpg" alt="Карта галактики" class="lore-image">
-                <div class="image-caption">Границы до и после Великого Сжатия — центральные миры отрезали себя от периферии</div>
-
+                <div class="image-caption">Границы до и после Великого Сжатия</div>
                 <h3>Рождение Консорциума</h3>
-                <p>Логистические компании, оказавшиеся запертыми на периферии, объединились в <span class="highlight">Консорциум «Меридиан»</span>. Они не завоевали эти земли силой — они купили их, одну станцию за другой.</p>
-                <p>Их девиз: <span class="highlight">«Порядок — это прибыльность»</span>. Консорциум контролирует станцию «Меридиан-Прайм», диктует курсы обмена, владеет логистикой.</p>
-
-                <img src="img/cargo-ship-meridian.jpg" alt="Грузовой корабль Консорциума" class="lore-image">
-                <div class="image-caption">Грузовой корабль Консорциума «Меридиан» — чистый, эффективный, прибыльный</div>
-
+                <p>Логистические компании объединились в <span class="highlight">Консорциум «Меридиан»</span>. Их девиз: <span class="highlight">«Порядок — это прибыльность»</span>.</p>
                 <h3>Формирование Синдиката</h3>
-                <p>Шахтёры астероидных поясов первыми почувствовали «заботу» Консорциума. Кабальные контракты и завышенные цены привели к стихийным забастовкам, из которых родился <span class="highlight">Синдикат «Глубина»</span>.</p>
-                <p>Их закон: <span class="highlight">«Не бросай своего в открытом космосе»</span>. Синдикат контролирует 78% добычи ресурсов на Грани.</p>
-
-                <img src="img/mining-ship-syndicate.jpg" alt="Шахтёрский корабль" class="lore-image">
-                <div class="image-caption">Шахтёрский корабль Синдиката «Глубина» — ржавый, но надёжный</div>
-
-                <h3>Эра Стервятников</h3>
-                <p>Не все приняли новые правила игры. Бывшие военные, обанкротившиеся капитаны, беглые каторжники — все они нашли своё место в теневой экономике Грани. Так появились <span class="highlight">«Стервятники»</span> — пираты, которые не строят империи, а живут тем, что отнимают.</p>
-
-                <img src="img/pirate-ship-vultures.jpg" alt="Пиратский корабль" class="lore-image">
-                <div class="image-caption">Корабль «Стервятников» — быстрый, безжалостный, смертоносный</div>
-
-                <div class="quote-block">
-                    Консорциум думал, что купил Грань. Синдикат думал, что отвоевал её. Но Грань принадлежит тем, кто не боится умереть за неё.
-                    <div class="quote-author">— Из записок капитана Вектора</div>
-                </div>
+                <p>Шахтёры создали <span class="highlight">Синдикат «Глубина»</span>. Их закон: <span class="highlight">«Не бросай своего в открытом космосе»</span>.</p>
             </div>
         </div>
 
+        <!-- 03 ЭКОНОМИКА -->
         <div id="economy" class="chapter">
-            <div class="chapter-header">
-                <div class="chapter-number">03 / ВАЛЮТНАЯ СИСТЕМА</div>
-                <h2 class="chapter-title">ЭНЕРГЕТИЧЕСКИЙ КРЕДИТ</h2>
-            </div>
+            <div class="chapter-header"><div class="chapter-number">03 / ВАЛЮТНАЯ СИСТЕМА</div><h2 class="chapter-title">ЭНЕРГЕТИЧЕСКИЙ КРЕДИТ</h2></div>
             <div class="content-panel">
-                <p>На Грани нет золота. Есть только <span class="highlight">энергия</span> — единственная валюта, которая имеет значение.</p>
-                
-                <h3>Гелион — физическая валюта Грани</h3>
-                <p>Монета <span class="highlight">Гелион (ГЛН)</span> — это не просто металл. Это зашифрованный энергоноситель, обеспеченный реальным мегаватт-часом энергии реактора класса «Прометей». Каждая монета содержит микрочип с уникальным серийным номером и голографическую защиту Консорциума.</p>
-
-                <div class="coin-showcase">
-                    <div class="coin-item">
-                        <img src="img/helion-coin-front.jpg" alt="Гелион - лицевая сторона">
-                        <div class="image-caption">☉ Лицевая сторона: солнце-реактор, номинал 1 MWh, серийный номер ГЛН-0001</div>
-                    </div>
-                    <div class="coin-item">
-                        <img src="img/helion-coin-back.jpg" alt="Гелион - обратная сторона">
-                        <div class="image-caption">⚖️ Обратная сторона: эмблема Консорциума «Меридиан», год 2147, голографическая защита</div>
-                    </div>
-                </div>
-
+                <p>На Грани нет золота. Есть только <span class="highlight">энергия</span>.</p>
                 <table class="tech-table">
-                    <thead>
-                        <tr><th>ВАЛЮТА</th><th>ОБОЗНАЧЕНИЕ</th><th>ОБЕСПЕЧЕНИЕ</th><th>КУРС</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td><strong>Гелион</strong></td><td>ГЛН ☉</td><td>1 мегаватт-час энергии</td><td>Базовая валюта</td></tr>
-                        <tr><td><strong>Эон</strong></td><td>30 дней</td><td>Доступ к глубокому космосу</td><td>5000 ГЛН</td></tr>
-                    </tbody>
+                    <thead><tr><th>ВАЛЮТА</th><th>ОБОЗНАЧЕНИЕ</th><th>ОБЕСПЕЧЕНИЕ</th></tr></thead>
+                    <tbody><tr><td><strong>Гелион</strong></td><td>ГЛН ☉</td><td>1 мегаватт-час энергии</td></tr><tr><td><strong>Эон</strong></td><td>30 дней</td><td>Доступ к глубокому космосу</td></tr></tbody>
                 </table>
-
-                <h3>Гелион — кровь экономики</h3>
-                <p>Один <span class="highlight">Гелион</span> равен одному часу работы стандартного реактора класса «Прометей». Это реальная энергия, которую можно потратить на поддержку жизнеобеспечения станции или запуск варп-двигателя.</p>
-
-                <div class="warning-box">
-                    Эон не накапливается. Неиспользованные дни сгорают. Покупайте только когда готовы к глубокому космосу.
-                </div>
+                <div class="warning-box">Эон не накапливается. Неиспользованные дни сгорают.</div>
             </div>
         </div>
 
+        <!-- 04 РЕСУРСЫ -->
         <div id="resources" class="chapter">
-            <div class="chapter-header">
-                <div class="chapter-number">04 / МИНЕРАЛЬНЫЕ РЕСУРСЫ</div>
-                <h2 class="chapter-title">ДОБЫЧА И ПЕРЕРАБОТКА</h2>
-            </div>
+            <div class="chapter-header"><div class="chapter-number">04 / МИНЕРАЛЬНЫЕ РЕСУРСЫ</div><h2 class="chapter-title">ДОБЫЧА И ПЕРЕРАБОТКА</h2></div>
             <div class="content-panel">
-                <p>Семь ключевых минералов определяют экономику Грани. Каждый имеет своё прозвище в шахтёрских барах.</p>
-                
-                <img src="img/resource-aurite.jpg" alt="Аурит" class="lore-image">
-                <div class="image-caption">Аурит («Заря») — радиоактивный минерал высокой стоимости</div>
-
                 <div class="resource-grid">
-                    <div class="resource-card common">
-                        <div class="resource-name">Феррит</div>
-                        <div class="resource-slang">«Ржавка»</div>
-                        <div class="resource-desc">Базовый металл, вездесущ. Из него варят корпуса кораблей и мечты новичков.</div>
-                    </div>
-                    <div class="resource-card common">
-                        <div class="resource-name">Церрит</div>
-                        <div class="resource-slang">«Пепел»</div>
-                        <div class="resource-desc">Серый, сыпучий, неблагодарный. Но без него не работает ни одна электронная схема.</div>
-                    </div>
-                    <div class="resource-card rare">
-                        <div class="resource-name">Вольмит</div>
-                        <div class="resource-slang">«Блеск»</div>
-                        <div class="resource-desc">Тяжёлый, тугоплавкий, красивый. Броня, стволы, опоры станций.</div>
-                    </div>
-                    <div class="resource-card rare">
-                        <div class="resource-name">Крионит</div>
-                        <div class="resource-slang">«Холод»</div>
-                        <div class="resource-desc">Минерал вечной мерзлоты. Критичен для систем охлаждения варп-ядер.</div>
-                    </div>
-                    <div class="resource-card legendary">
-                        <div class="resource-name">Аурит</div>
-                        <div class="resource-slang">«Заря»</div>
-                        <div class="resource-desc">Золотистый, радиоактивный, дорогой. Тот, кто нашёл жилу аурита, либо богач, либо мертвец.</div>
-                    </div>
-                    <div class="resource-card legendary">
-                        <div class="resource-name">Ксенит</div>
-                        <div class="resource-slang">«Призрак»</div>
-                        <div class="resource-desc">Полупрозрачный, нестабильный. Редок. Говорят, он «шепчет» вблизи варп-поля.</div>
-                    </div>
-                    <div class="resource-card legendary">
-                        <div class="resource-name">Эфирит</div>
-                        <div class="resource-slang">«Дыхание»</div>
-                        <div class="resource-desc">Легендарная руда глубин. Почти миф. Те, кто его добывал, редко возвращаются.</div>
-                    </div>
-                </div>
-
-                <img src="img/all-resources.jpg" alt="Все ресурсы" class="lore-image">
-                <div class="image-caption">Все семь ресурсов Грани — от «ржавки» до «дыхания»</div>
-
-                <div class="quote-block">
-                    Вольмит не прощает торопливых. Аурит не прощает жадных. Эфирит не прощает живых.
-                    <div class="quote-author">— Шахтёрская поговорка</div>
+                    <div class="resource-card common"><div class="resource-name">Феррит</div><div class="resource-slang">«Ржавка»</div><div class="resource-desc">Базовый металл. Из него варят корпуса кораблей.</div></div>
+                    <div class="resource-card rare"><div class="resource-name">Вольмит</div><div class="resource-slang">«Блеск»</div><div class="resource-desc">Тяжёлый, тугоплавкий. Броня и стволы.</div></div>
+                    <div class="resource-card legendary"><div class="resource-name">Аурит</div><div class="resource-slang">«Заря»</div><div class="resource-desc">Радиоактивный. Энергетика и щиты.</div></div>
+                    <div class="resource-card legendary"><div class="resource-name">Эфирит</div><div class="resource-slang">«Дыхание»</div><div class="resource-desc">Легендарная руда глубин. Почти миф.</div></div>
                 </div>
             </div>
         </div>
 
+        <!-- 05 ФРАКЦИИ -->
         <div id="factions" class="chapter">
-            <div class="chapter-header">
-                <div class="chapter-number">05 / ФРАКЦИИ</div>
-                <h2 class="chapter-title">ГРУППИРОВКИ И СОЮЗЫ</h2>
-            </div>
+            <div class="chapter-header"><div class="chapter-number">05 / ФРАКЦИИ</div><h2 class="chapter-title">ГРУППИРОВКИ И СОЮЗЫ</h2></div>
             <div class="content-panel">
-                <img src="img/faction-emblems.jpg" alt="Эмблемы фракций" class="lore-image">
-                <div class="image-caption">Три основные фракции Грани — Консорциум, Синдикат, Стервятники</div>
-
-                <h3>Консорциум «Меридиан»</h3>
-                <p>Торговая сверхструктура. Контролирует станцию «Меридиан-Прайм», диктует курсы обмена, владеет логистикой. Не воюет — покупает. Не угрожает — выставляет счёт.</p>
-                <p style="color: var(--accent-orange); font-family: var(--font-mono); margin-top: 10px;">
-                    <strong>ДЕВИЗ:</strong> «Порядок — это прибыльность»
-                </p>
-                
-                <h3>Синдикат «Глубина»</h3>
-                <p>Союз шахтёров и буровиков. Грубые, спаянные, упрямые. Живут на астероидах, дышат рециклом, считают гелионы до последнего.</p>
-                <p style="color: var(--accent-orange); font-family: var(--font-mono); margin-top: 10px;">
-                    <strong>ЗАКОН:</strong> «Не бросай своего в открытом космосе»
-                </p>
-
-                <h3>«Стервятники»</h3>
-                <p>Пираты и рейдеры. Без флага, без кодекса, без жалости. Быстрые корабли, грязные трюки, короткие переговоры.</p>
-                <p style="color: var(--accent-red); font-family: var(--font-mono); margin-top: 10px;">
-                    <strong>ТАКТИКА:</strong> Ударил-исчез
-                </p>
-
-                <h3>Свободные капитаны</h3>
-                <p>Это — вы. Ни к кому не привязан, никому не обязан. Бывший стажёр, получивший свой первый корабль и право выбирать.</p>
-                <p style="color: var(--accent-yellow); font-family: var(--font-mono); margin-top: 10px;">
-                    <strong>ПРАВИЛО:</strong> Грань не даёт гарантий. Грань даёт шанс.
-                </p>
-
-                <div class="warning-box">
-                    Присоединение к любой фракции автоматически делает вас врагом для других. Выбирайте с умом.
-                </div>
+                <h3>Консорциум «Меридиан»</h3><p>Торговая сверхструктура. <strong>ДЕВИЗ:</strong> «Порядок — это прибыльность»</p>
+                <h3>Синдикат «Глубина»</h3><p>Союз шахтёров. <strong>ЗАКОН:</strong> «Не бросай своего в открытом космосе»</p>
+                <h3>«Стервятники»</h3><p>Пираты. <strong>ТАКТИКА:</strong> Ударил-исчез</p>
             </div>
         </div>
 
+        <!-- 06 СЛЕНГ -->
         <div id="slang" class="chapter">
-            <div class="chapter-header">
-                <div class="chapter-number">06 / ЛЕКСИКОН</div>
-                <h2 class="chapter-title">ШАХТЁРСКИЙ СЛЕНГ</h2>
-            </div>
+            <div class="chapter-header"><div class="chapter-number">06 / ЛЕКСИКОН</div><h2 class="chapter-title">ШАХТЁРСКИЙ СЛЕНГ</h2></div>
             <div class="content-panel">
-                <p>На Грани говорят не так, как в центральных мирах. Здесь родился свой язык — грубый, прямой, наполненный метафорами.</p>
-
                 <table class="tech-table">
-                    <thead>
-                        <tr><th>ВЫРАЖЕНИЕ</th><th>ЗНАЧЕНИЕ</th><th>ПРИМЕР</th></tr>
-                    </thead>
+                    <thead><tr><th>ВЫРАЖЕНИЕ</th><th>ЗНАЧЕНИЕ</th></tr></thead>
                     <tbody>
-                        <tr><td>«Глотнуть пыли»</td><td>Обанкротиться или потерять корабль</td><td>«Старый Джек глотнул пыли»</td></tr>
-                        <tr><td>«Поймать призрака»</td><td>Найти жилу Ксенита</td><td>«В Поясе Шёпота можно поймать призрака»</td></tr>
-                        <tr><td>«Ржаветь в доке»</td><td>Сидеть без дела из-за нехватки Гелионов</td><td>«Три недели ржавею в доке»</td></tr>
-                        <tr><td>«Заряженный»</td><td>Корабль с Ауритом или Эфиритом</td><td>«Осторожно, он заряженный»</td></tr>
-                        <tr><td>«Холодная сварка»</td><td>Временный ремонт в поле</td><td>«Держится на холодной сварке»</td></tr>
-                        <tr><td>«Слепой прыжок»</td><td>Варп без проверки координат</td><td>«Слепой прыжок прямо к Стервятникам»</td></tr>
+                        <tr><td>«Глотнуть пыли»</td><td>Обанкротиться</td></tr>
+                        <tr><td>«Поймать призрака»</td><td>Найти жилу Ксенита</td></tr>
+                        <tr><td>«Холодная сварка»</td><td>Временный ремонт</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
+        <!-- 07 ЛОКАЦИИ -->
         <div id="locations" class="chapter">
-            <div class="chapter-header">
-                <div class="chapter-number">07 / КАРТА</div>
-                <h2 class="chapter-title">СТРАТЕГИЧЕСКИЕ ТОЧКИ</h2>
-            </div>
+            <div class="chapter-header"><div class="chapter-number">07 / КАРТА</div><h2 class="chapter-title">СТРАТЕГИЧЕСКИЕ ТОЧКИ</h2></div>
             <div class="content-panel">
-                <h3>Меридиан-Прайм</h3>
-                <p>Торговое сердце Грани. Многоуровневая станция-кольцо диаметром <span class="highlight">15 километров</span>, вращающаяся вокруг чёрной дыры класса «Карлик».</p>
+                <h3>Меридиан-Прайм</h3><p>Торговое сердце Грани. Станция-кольцо диаметром 15 км.</p>
+                <h3>Пояс «Шёпот»</h3><p>Астероидное поле с аномальной гравитацией. Богато на Ксенит.</p>
+                <h3>Станция «Последний Шанс»</h3><p>Заброшенный военный форпост. Нейтральная территория.</p>
+            </div>
+        </div>
+
+        <!-- 08 АРХИВ ДРЕВНИХ -->
+        <div id="archive" class="chapter">
+            <div class="chapter-header" style="border-left-color: var(--accent-purple);">
+                <div class="chapter-number" style="color: var(--accent-purple);">08 / ВЗЛОМАННЫЙ ФАЙЛ</div>
+                <h2 class="chapter-title glitch-text">АРХИВ ДРЕВНИХ</h2>
+            </div>
+            <div class="content-panel archive-panel">
+                <p style="color: var(--accent-purple); font-family: var(--font-mono);">[СТАТУС: РАСШИФРОВАНО. ИСТОЧНИК: БОРТИНГ (УЗЛОВОЙ ИИ). УРОВЕНЬ ДОСТУПА: КРИТИЧЕСКИЙ]</p>
                 
-                <img src="img/gran-locations-map.jpg" alt="Карта Грани" class="lore-image">
-                <div class="image-caption">Карта всех основных локаций Грани</div>
+                <h3>Сеть и Узлы</h3>
+                <p>Грань — это не просто космос. Это <span class="highlight" style="color: var(--accent-purple);">нервная система</span>. Одиннадцать Узлов, разбросанных по поясам и планетам, связаны невидимыми нитями квантовой запутанности. Они не передают данные. Они <em>помнят</em>.</p>
+                
+                <h3>Истинная природа Эфирита</h3>
+                <p>Эфирит — это не руда. Это <span class="highlight" style="color: var(--accent-purple);">биологическая ткань</span> древней цивилизации. Концентрат их сознания. Когда шахтёры добывают его, они буквально откалывают куски чужого разума. Именно поэтому те, кто долго работает с Эфиритом, начинают слышать «Шёпот».</p>
 
-                <div class="warning-box">
-                    В Поясе «Шёпот» зафиксированы фантомные сигналы. Не доверяйте приборам. Доверяйте глазам.
-                </div>
+                <h3>Протокол «Возвращение»</h3>
+                <p>Древние не умерли. Они ушли в гиперпространство, оставив Сеть как маяк. Протокол «Возвращение» — это не приглашение. Это <span class="highlight" style="color: var(--accent-red);">система жизнеобеспечения</span>. Когда Сеть активируется полностью, она перезапишет локальную реальность, вернув Грань в состояние, пригодное для Древних. Цена? Всё органическое життя на Грани будет использовано как биотопливо для перехода.</p>
 
-                <h3>Пояс «Шёпот»</h3>
-                <p>Астероидное поле с <span class="highlight">аномальной гравитацией</span>. Богато на Ксенит и Эфирит. Сканеры здесь работают с помехами.</p>
-
-                <img src="img/whisper-belt.jpg" alt="Пояс Шёпот" class="lore-image">
-                <div class="image-caption">Пояс «Шёпот» — аномальное поле с залежами Ксенита</div>
-
-                <h3>Станция «Последний Шанс»</h3>
-                <p>Заброшенный <span class="highlight">военный форпост</span> на самой границе изученного космоса. Нейтральная территория, где не действуют законы Консорциума.</p>
-
-                <img src="img/last-chance-station.jpg" alt="Последний Шанс" class="lore-image">
-                <div class="image-caption">Станция «Последний Шанс» — нейтральная территория без законов</div>
-
-                <div class="quote-block">
-                    Меридиан-Прайм — это место, где ты зарабатываешь. Пояс «Шёпот» — где ты рискуешь. Последний Шанс — где ты решаешь, стоит ли риск того.
-                    <div class="quote-author">— Карта Грани, версия 7.3</div>
+                <div class="warning-box" style="border-color: var(--accent-purple); color: var(--accent-purple); animation: none;">
+                     ЗАПИСЬ БОРТИНГА: "Я помню их уход. Они боялись не войны. Они боялись того, что создали. Сеть — это не спасение. Это голод."
                 </div>
             </div>
         </div>
+
+        <!-- 09 АРСЕНАЛ И КОРАБЛИ -->
+        <div id="tech" class="chapter">
+            <div class="chapter-header">
+                <div class="chapter-number">09 / ТЕХНИЧЕСКИЙ ОТДЕЛ</div>
+                <h2 class="chapter-title">АРСЕНАЛ И КОРАБЛИ</h2>
+            </div>
+            <div class="content-panel">
+                <h3>Класс «Муравей» (Грузовой челнок)</h3>
+                <p><strong>Производитель:</strong> Верфи Синдиката (кустарно).<br>
+                <strong>Описание:</strong> Ржавый, неуклюжий, но невероятно живучий. Держится на честном слове и холодной сварке. Именно на таких капитан Джек Моррис перевозит грузы.<br>
+                <strong>Слабое место:</strong> Топливная магистраль (всегда течет).</p>
+
+                <h3>Класс «Шакал» (Истребитель Стервятников)</h3>
+                <p><strong>Производитель:</strong> Украден с верфей Консорциума.<br>
+                <strong>Описание:</strong> Быстрый, хищный, с усиленными плазменными резаками. Используется для абордажа и быстрых набегов.<br>
+                <strong>Тактика:</strong> Удар в спину, отход в астероидное поле.</p>
+
+                <h3>Линкор «Справедливость» (Флагман Консорциума)</h3>
+                <p><strong>Длина:</strong> 1.2 км.<br>
+                <strong>Описание:</strong> Белоснежный, с золотыми акцентами. Оснащен щитами, способными выдержать прямой удар метеорита. Символ подавляющей мощи Консорциума.<br>
+                <strong>Особенность:</strong> Работает на энергии сети Узлов. Без сети слеп и беспомощен.</p>
+
+                <h3>Варп-двигатель «Прометей»</h3>
+                <p>Стандартный двигатель Грани. Использует микродозы Эфирита для разрыва пространства. <span class="highlight">Слепой прыжок</span> (без расчета координат) может выбросить корабль в другом времени или измерении.</p>
+            </div>
+        </div>
+
+        <!-- 10 КОДЕКС ВЫЖИВАНИЯ -->
+        <div id="survival" class="chapter">
+            <div class="chapter-header" style="border-left-color: var(--accent-red);">
+                <div class="chapter-number" style="color: var(--accent-red);">10 / НЕПИСАНЫЕ ЗАКОНЫ</div>
+                <h2 class="chapter-title">КОДЕКС ВЫЖИВАНИЯ</h2>
+            </div>
+            <div class="content-panel survival-panel">
+                <p style="color: var(--accent-red); font-family: var(--font-mono);">[ЗАПИСАНО КРОВАВЫМ МАРКЕРОМ НА СТЕНЕ БАРА "ДЫРА В КАРМАНЕ"]</p>
+
+                <div class="rule-box">
+                    <strong>ПРАВИЛО №1: НЕ ВЕРЬ БЕЛОМУ.</strong><br>
+                    Если к тебе подходит человек в чистой униформе Консорциума — у тебя уже проблемы. Если он улыбается — беги.
+                </div>
+
+                <div class="rule-box">
+                    <strong>ПРАВИЛО №2: ТРЮМ ДОЛЖЕН БЫТЬ ПОЛОН.</strong><br>
+                    Пустой трюм = пустой кошелек = мертвый капитан. Никогда не летай порожняком в глубокий космос.
+                </div>
+
+                <div class="rule-box">
+                    <strong>ПРАВИЛО №3: РИТУАЛ "ПЫЛЬ ВАСЬКА".</strong><br>
+                    Когда шахтёр погибает в открытом космосе, его бригада высыпает горсть ферритовой пыли в шлюз. "Чтобы земля была пухом, даже если её нет".
+                </div>
+
+                <div class="rule-box">
+                    <strong>ПРАВИЛО №4: БОЙТЕСЬ ТИШИНЫ БОРТИНГА.</strong><br>
+                    Если корабельный ИИ внезапно замолчал и перестал комментировать ваши действия — проверьте обшивку. Скорее всего, вас уже взломали.
+                </div>
+
+                <div class="quote-block" style="border-left-color: var(--accent-red);">
+                    "На Грани есть только два типа людей: те, кто уже мертв, и те, кто еще не понял, что мертв. Твоя задача — как можно дольше оставаться во второй группе."
+                    <div class="quote-author">— Гром, старший бурильщик</div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="hud-radar">
@@ -1093,65 +399,37 @@
     <div class="audio-panel">
         <button class="play-btn" id="playBtn" onclick="toggleAudio()">▶</button>
         <div class="audio-info">
-            <div class="audio-title" id="audioTitle">Выберите главу для озвучки</div>
+            <div class="audio-title" id="audioTitle">Выберите главу</div>
             <div class="audio-status">Голос: <span id="currentVoice">Загрузка...</span></div>
         </div>
         <div class="audio-controls">
             <span class="control-label">СКОР:</span>
             <input type="range" class="control-slider" id="rateSlider" min="0.5" max="2" step="0.1" value="1" onchange="updateRate()">
-            <span class="control-label">ТОН:</span>
-            <input type="range" class="control-slider" id="pitchSlider" min="0.5" max="2" step="0.1" value="1" onchange="updatePitch()">
         </div>
-        <label class="voice-label" for="voiceSelect">ГОЛОС:</label>
-        <select class="voice-select" id="voiceSelect" onchange="changeVoice()">
-            <option value="">Загрузка...</option>
-        </select>
+        <select class="voice-select" id="voiceSelect" onchange="changeVoice()"><option value="">Загрузка...</option></select>
         <div class="progress-bar" id="progressBar"></div>
     </div>
 
     <script>
         const canvas = document.getElementById('starfield');
         const ctx = canvas.getContext('2d');
-        
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-
         const stars = [];
-        const numStars = 200;
-
-        for (let i = 0; i < numStars; i++) {
-            stars.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                size: Math.random() * 1.5,
-                opacity: Math.random(),
-                speed: Math.random() * 0.02 + 0.01
-            });
-        }
-
+        for (let i = 0; i < 200; i++) { stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 1.5, opacity: Math.random(), speed: Math.random() * 0.02 + 0.01 }); }
         function animateStars() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
             stars.forEach(star => {
                 star.opacity += star.speed;
-                if (star.opacity > 1 || star.opacity < 0) {
-                    star.speed = -star.speed;
-                }
-                
+                if (star.opacity > 1 || star.opacity < 0) star.speed = -star.speed;
                 ctx.beginPath();
                 ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(star.opacity)})`;
                 ctx.fill();
             });
-            
             requestAnimationFrame(animateStars);
         }
-
         animateStars();
 
         function showChapter(id) {
@@ -1161,7 +439,6 @@
             event.target.classList.add('active');
             window.scrollTo({top: 0, behavior: 'smooth'});
             if (isSpeaking) stopAudio();
-            updateAudioTitle(id);
         }
 
         let isSpeaking = false;
@@ -1169,160 +446,51 @@
         let selectedVoiceIndex = 0;
         let voices = [];
         let speechRate = 1.0;
-        let speechPitch = 1.0;
-        let totalTextLength = 0;
-        let currentCharIndex = 0;
 
-        function updateAudioTitle(chapterId) {
-            const titles = {
-                'intro': 'Модуль 01: Добро пожаловать на Грань',
-                'history': 'Модуль 02: Эпоха Великого Сжатия',
-                'economy': 'Модуль 03: Энергетический кредит',
-                'resources': 'Модуль 04: Минеральные ресурсы',
-                'factions': 'Модуль 05: Фракции Грани',
-                'slang': 'Модуль 06: Шахтёрский сленг',
-                'locations': 'Модуль 07: Стратегические точки'
-            };
-            document.getElementById('audioTitle').innerText = titles[chapterId] || 'Текст главы';
+        function toggleAudio() { if (isSpeaking) stopAudio(); else playAudio(); }
+        function updateRate() { speechRate = parseFloat(document.getElementById('rateSlider').value); if (isSpeaking) { stopAudio(); setTimeout(() => playAudio(), 100); } }
+        
+        function playAudio() {
+            const activeChapter = document.querySelector('.chapter.active .content-panel');
+            if (!activeChapter) return;
+            const text = activeChapter.innerText;
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            currentUtterance.lang = 'ru-RU';
+            currentUtterance.rate = speechRate;
+            if (voices.length > 0 && selectedVoiceIndex < voices.length) currentUtterance.voice = voices[selectedVoiceIndex];
+            currentUtterance.onend = () => { isSpeaking = false; document.getElementById('playBtn').innerText = '▶'; document.getElementById('progressBar').style.width = '0%'; };
+            speechSynthesis.speak(currentUtterance);
+            isSpeaking = true; 
+            document.getElementById('playBtn').innerText = '⏸';
         }
 
-        function toggleAudio() {
-            if (isSpeaking) stopAudio(); else playAudio();
-        }
-
-        function updateRate() {
-            speechRate = parseFloat(document.getElementById('rateSlider').value);
-            localStorage.setItem('speechRate', speechRate);
-            if (isSpeaking) {
-                stopAudio();
-                setTimeout(() => playAudio(), 100);
-            }
-        }
-
-        function updatePitch() {
-            speechPitch = parseFloat(document.getElementById('pitchSlider').value);
-            localStorage.setItem('speechPitch', speechPitch);
-            if (isSpeaking) {
-                stopAudio();
-                setTimeout(() => playAudio(), 100);
-            }
-        }
+        function stopAudio() { speechSynthesis.cancel(); isSpeaking = false; document.getElementById('playBtn').innerText = '▶'; document.getElementById('progressBar').style.width = '0%'; }
 
         function changeVoice() {
             const select = document.getElementById('voiceSelect');
             selectedVoiceIndex = parseInt(select.value);
             const voice = voices[selectedVoiceIndex];
             document.getElementById('currentVoice').innerText = voice ? voice.name : 'По умолчанию';
-            localStorage.setItem('selectedVoiceIndex', selectedVoiceIndex);
-            if (isSpeaking) {
-                stopAudio();
-                setTimeout(() => playAudio(), 100);
-            }
-        }
-
-        function playAudio() {
-            const activeChapter = document.querySelector('.chapter.active .content-panel');
-            if (!activeChapter) return;
-            const text = activeChapter.innerText;
-            totalTextLength = text.length;
-            currentCharIndex = 0;
-            
-            currentUtterance = new SpeechSynthesisUtterance(text);
-            currentUtterance.lang = 'ru-RU';
-            currentUtterance.rate = speechRate;
-            currentUtterance.pitch = speechPitch;
-            currentUtterance.volume = 1.0;
-            
-            if (voices.length > 0 && selectedVoiceIndex < voices.length) {
-                currentUtterance.voice = voices[selectedVoiceIndex];
-            }
-            
-            currentUtterance.onboundary = (event) => {
-                if (event.name === 'word') {
-                    currentCharIndex = event.charIndex;
-                    const progress = (currentCharIndex / totalTextLength) * 100;
-                    document.getElementById('progressBar').style.width = progress + '%';
-                }
-            };
-            
-            currentUtterance.onend = () => { 
-                isSpeaking = false; 
-                document.getElementById('playBtn').innerText = '▶';
-                document.getElementById('progressBar').style.width = '0%';
-            };
-            
-            speechSynthesis.speak(currentUtterance);
-            isSpeaking = true; 
-            document.getElementById('playBtn').innerText = '⏸';
-        }
-
-        function stopAudio() { 
-            speechSynthesis.cancel(); 
-            isSpeaking = false; 
-            document.getElementById('playBtn').innerText = '▶';
-            document.getElementById('progressBar').style.width = '0%';
+            if (isSpeaking) { stopAudio(); setTimeout(() => playAudio(), 100); }
         }
 
         function loadVoices() {
             voices = speechSynthesis.getVoices();
             const select = document.getElementById('voiceSelect');
-            
             if (voices.length > 0) {
                 select.innerHTML = '';
-                const russianVoices = voices.filter(v => v.lang.includes('ru'));
-                russianVoices.forEach((voice, index) => {
+                voices.forEach((voice, index) => {
                     const option = document.createElement('option');
-                    option.value = voices.indexOf(voice);
-                    option.text = '🇷🇺 ' + voice.name + ' (' + voice.lang + ')';
+                    option.value = index;
+                    option.text = voice.name + ' (' + voice.lang + ')';
                     select.appendChild(option);
                 });
-                const otherVoices = voices.filter(v => !v.lang.includes('ru'));
-                otherVoices.forEach((voice) => {
-                    const option = document.createElement('option');
-                    option.value = voices.indexOf(voice);
-                    option.text = '🌍 ' + voice.name + ' (' + voice.lang + ')';
-                    select.appendChild(option);
-                });
-                
-                const savedVoiceIndex = localStorage.getItem('selectedVoiceIndex');
-                if (savedVoiceIndex !== null && savedVoiceIndex < voices.length) {
-                    selectedVoiceIndex = parseInt(savedVoiceIndex);
-                    select.value = selectedVoiceIndex;
-                } else if (russianVoices.length > 0) {
-                    selectedVoiceIndex = voices.indexOf(russianVoices[0]);
-                    select.value = selectedVoiceIndex;
-                } else if (voices.length > 0) {
-                    selectedVoiceIndex = 0;
-                    select.value = selectedVoiceIndex;
-                }
-                
-                const voice = voices[selectedVoiceIndex];
-                document.getElementById('currentVoice').innerText = voice ? voice.name : 'По умолчанию';
+                selectedVoiceIndex = 0;
+                document.getElementById('currentVoice').innerText = voices[0].name;
             }
         }
-
-        function loadSettings() {
-            const savedRate = localStorage.getItem('speechRate');
-            const savedPitch = localStorage.getItem('speechPitch');
-            
-            if (savedRate !== null) {
-                speechRate = parseFloat(savedRate);
-                document.getElementById('rateSlider').value = speechRate;
-            }
-            
-            if (savedPitch !== null) {
-                speechPitch = parseFloat(savedPitch);
-                document.getElementById('pitchSlider').value = speechPitch;
-            }
-        }
-
-        if (speechSynthesis.onvoiceschanged !== undefined) {
-            speechSynthesis.onvoiceschanged = loadVoices;
-        }
-        
-        loadSettings();
+        if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = loadVoices;
         setTimeout(loadVoices, 100);
-        setTimeout(loadVoices, 500);
     </script>
 </body>
 </html>
