@@ -8,11 +8,8 @@
     <title>ODYSSEY: ГРАНЬ | КОДЕКС ПОГРАНИЧНЫХ ТЕРРИТОРИЙ v2.0</title>
     <link rel="manifest" href="manifest.json">
     
-    <!-- FAVICON (SVG, работает офлайн) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%230a0e1a' stroke='%23ff9500' stroke-width='2'/%3E%3Ctext x='16' y='21' font-family='monospace' font-size='16' fill='%23ff9500' text-anchor='middle'%3E☉%3C/text%3E%3C/svg%3E">
-    
-    <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Ccircle cx='90' cy='90' r='80' fill='%230a0e1a' stroke='%23ff9500' stroke-width='4'/%3E%3Ctext x='90' y='115' font-family='monospace' font-size='90' fill='%23ff9500' text-anchor='middle'%3E☉%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Ccircle cx='90' cy='90' r='80' fill='%230a0e1a' stroke='%23ff9500' stroke-width='4'/%3E%3Ctext x='90' y='115' font-family='monospace' font-size='90' fill='%23ff9500' text-anchor='middle'%3E%3C/text%3E%3C/svg%3E">
     
     <style>
         :root {
@@ -261,7 +258,7 @@
 
         .main-container {
             max-width: 1400px; margin: 0 auto;
-            padding: 175px 20px 100px;
+            padding: 200px 20px 100px;
         }
 
         .chapter-header {
@@ -650,6 +647,49 @@
             z-index: 1;
         }
 
+        .audio-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .control-label {
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+        }
+
+        .control-slider {
+            width: 80px;
+            height: 4px;
+            background: var(--border-color);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: var(--accent-orange);
+            transition: width 0.3s;
+            z-index: 2;
+        }
+
         .chapter { display: none; }
         .chapter.active { 
             display: block; 
@@ -682,6 +722,8 @@
             .coin-showcase { flex-direction: column; align-items: center; gap: 20px; padding: 15px; }
             .coin-item { min-width: 100%; max-width: 100%; }
             .coin-item img { max-width: 100%; }
+            .audio-controls { width: 100%; justify-content: space-between; }
+            .control-slider { width: 60px; }
             
             .hud-radar { bottom: 110px; right: 10px; }
             .radar { width: 65px; height: 65px; }
@@ -1024,10 +1066,17 @@
             <div class="audio-title" id="audioTitle">Выберите главу для озвучки</div>
             <div class="audio-status">Голос: <span id="currentVoice">Загрузка...</span></div>
         </div>
+        <div class="audio-controls">
+            <span class="control-label">СКОР:</span>
+            <input type="range" class="control-slider" id="rateSlider" min="0.5" max="2" step="0.1" value="1" onchange="updateRate()">
+            <span class="control-label">ТОН:</span>
+            <input type="range" class="control-slider" id="pitchSlider" min="0.5" max="2" step="0.1" value="1" onchange="updatePitch()">
+        </div>
         <label class="voice-label" for="voiceSelect">ГОЛОС:</label>
         <select class="voice-select" id="voiceSelect" onchange="changeVoice()">
             <option value="">Загрузка...</option>
         </select>
+        <div class="progress-bar" id="progressBar"></div>
     </div>
 
     <script>
@@ -1089,6 +1138,10 @@
         let currentUtterance = null;
         let selectedVoiceIndex = 0;
         let voices = [];
+        let speechRate = 1.0;
+        let speechPitch = 1.0;
+        let totalTextLength = 0;
+        let currentCharIndex = 0;
 
         function updateAudioTitle(chapterId) {
             const titles = {
@@ -1107,11 +1160,30 @@
             if (isSpeaking) stopAudio(); else playAudio();
         }
 
+        function updateRate() {
+            speechRate = parseFloat(document.getElementById('rateSlider').value);
+            localStorage.setItem('speechRate', speechRate);
+            if (isSpeaking) {
+                stopAudio();
+                setTimeout(() => playAudio(), 100);
+            }
+        }
+
+        function updatePitch() {
+            speechPitch = parseFloat(document.getElementById('pitchSlider').value);
+            localStorage.setItem('speechPitch', speechPitch);
+            if (isSpeaking) {
+                stopAudio();
+                setTimeout(() => playAudio(), 100);
+            }
+        }
+
         function changeVoice() {
             const select = document.getElementById('voiceSelect');
             selectedVoiceIndex = parseInt(select.value);
             const voice = voices[selectedVoiceIndex];
             document.getElementById('currentVoice').innerText = voice ? voice.name : 'По умолчанию';
+            localStorage.setItem('selectedVoiceIndex', selectedVoiceIndex);
             if (isSpeaking) {
                 stopAudio();
                 setTimeout(() => playAudio(), 100);
@@ -1122,19 +1194,31 @@
             const activeChapter = document.querySelector('.chapter.active .content-panel');
             if (!activeChapter) return;
             const text = activeChapter.innerText;
+            totalTextLength = text.length;
+            currentCharIndex = 0;
+            
             currentUtterance = new SpeechSynthesisUtterance(text);
             currentUtterance.lang = 'ru-RU';
-            currentUtterance.rate = 0.95;
-            currentUtterance.pitch = 1.0;
+            currentUtterance.rate = speechRate;
+            currentUtterance.pitch = speechPitch;
             currentUtterance.volume = 1.0;
             
             if (voices.length > 0 && selectedVoiceIndex < voices.length) {
                 currentUtterance.voice = voices[selectedVoiceIndex];
             }
             
+            currentUtterance.onboundary = (event) => {
+                if (event.name === 'word') {
+                    currentCharIndex = event.charIndex;
+                    const progress = (currentCharIndex / totalTextLength) * 100;
+                    document.getElementById('progressBar').style.width = progress + '%';
+                }
+            };
+            
             currentUtterance.onend = () => { 
                 isSpeaking = false; 
-                document.getElementById('playBtn').innerText = '▶'; 
+                document.getElementById('playBtn').innerText = '▶';
+                document.getElementById('progressBar').style.width = '0%';
             };
             
             speechSynthesis.speak(currentUtterance);
@@ -1145,7 +1229,8 @@
         function stopAudio() { 
             speechSynthesis.cancel(); 
             isSpeaking = false; 
-            document.getElementById('playBtn').innerText = '▶'; 
+            document.getElementById('playBtn').innerText = '▶';
+            document.getElementById('progressBar').style.width = '0%';
         }
 
         function loadVoices() {
@@ -1165,22 +1250,47 @@
                 otherVoices.forEach((voice) => {
                     const option = document.createElement('option');
                     option.value = voices.indexOf(voice);
-                    option.text = '🌍 ' + voice.name + ' (' + voice.lang + ')';
+                    option.text = ' ' + voice.name + ' (' + voice.lang + ')';
                     select.appendChild(option);
                 });
-                if (russianVoices.length > 0) {
+                
+                const savedVoiceIndex = localStorage.getItem('selectedVoiceIndex');
+                if (savedVoiceIndex !== null && savedVoiceIndex < voices.length) {
+                    selectedVoiceIndex = parseInt(savedVoiceIndex);
+                    select.value = selectedVoiceIndex;
+                } else if (russianVoices.length > 0) {
                     selectedVoiceIndex = voices.indexOf(russianVoices[0]);
-                    document.getElementById('currentVoice').innerText = russianVoices[0].name;
+                    select.value = selectedVoiceIndex;
                 } else if (voices.length > 0) {
                     selectedVoiceIndex = 0;
-                    document.getElementById('currentVoice').innerText = voices[0].name;
+                    select.value = selectedVoiceIndex;
                 }
+                
+                const voice = voices[selectedVoiceIndex];
+                document.getElementById('currentVoice').innerText = voice ? voice.name : 'По умолчанию';
+            }
+        }
+
+        function loadSettings() {
+            const savedRate = localStorage.getItem('speechRate');
+            const savedPitch = localStorage.getItem('speechPitch');
+            
+            if (savedRate !== null) {
+                speechRate = parseFloat(savedRate);
+                document.getElementById('rateSlider').value = speechRate;
+            }
+            
+            if (savedPitch !== null) {
+                speechPitch = parseFloat(savedPitch);
+                document.getElementById('pitchSlider').value = speechPitch;
             }
         }
 
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = loadVoices;
         }
+        
+        loadSettings();
         setTimeout(loadVoices, 100);
         setTimeout(loadVoices, 500);
     </script>
