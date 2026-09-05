@@ -117,7 +117,7 @@
 
         .warning-box { background: rgba(255, 51, 51, 0.1); border: 1px solid var(--accent-red); border-left: 4px solid var(--accent-red); padding: 20px; margin: 20px 0; font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-red); animation: warningPulse 2s ease-in-out infinite; }
         @keyframes warningPulse { 0%, 100% { box-shadow: 0 0 10px rgba(255, 51, 51, 0.3); } 50% { box-shadow: 0 0 20px rgba(255, 51, 51, 0.6); } }
-        .warning-box::before { content: '⚠ ВНИМАНИЕ: '; font-weight: bold; }
+        .warning-box::before { content: ' ВНИМАНИЕ: '; font-weight: bold; }
         .quote-block { background: var(--bg-darker); border-left: 4px solid var(--accent-cyan); padding: 20px; margin: 20px 0; font-style: italic; color: var(--text-secondary); }
         .quote-author { text-align: right; color: var(--accent-orange); font-style: normal; font-size: 0.85rem; margin-top: 10px; font-family: var(--font-mono); }
 
@@ -165,8 +165,9 @@
             .header { flex-direction: column; gap: 4px; padding: 6px 12px; align-items: flex-start; height: auto; }
             .header-stats { display: none; }
             .project-info h1 { font-size: 1.1rem; } .project-info .subtitle { font-size: 0.6rem; }
-            .nav-tabs { top: 72px; height: auto; padding: 8px 20px; }
-            .main-container { padding: 135px 15px 140px; }
+            .nav-tabs { top: 60px; height: auto; padding: 8px 10px; }
+            .nav-tab { padding: 6px 12px; font-size: 0.65rem; }
+            .main-container { padding: 125px 15px 140px; }
             .chapter-title { font-size: 1.3rem; } .content-panel { padding: 20px; }
             .resource-grid { grid-template-columns: 1fr; }
             .audio-panel { flex-wrap: wrap; padding: 10px; gap: 8px; } .voice-select { max-width: 120px; }
@@ -201,7 +202,7 @@
         </div>
     </header>
 
-    <nav class="nav-tabs">
+    <nav class="nav-tabs" id="navTabs">
         <button class="nav-tab active" onclick="showChapter('intro')">01 ВВЕДЕНИЕ</button>
         <button class="nav-tab" onclick="showChapter('history')">02 ИСТОРИЯ</button>
         <button class="nav-tab" onclick="showChapter('economy')">03 ЭКОНОМИКА</button>
@@ -468,6 +469,17 @@
             requestAnimationFrame(animateStars);
         }
         animateStars();
+
+        // Прокрутка навигации колесом мыши (только на десктопе)
+        const navTabs = document.getElementById('navTabs');
+        if (navTabs && window.innerWidth > 768) {
+            navTabs.addEventListener('wheel', (e) => {
+                if (e.deltaY !== 0) {
+                    e.preventDefault();
+                    navTabs.scrollLeft += e.deltaY;
+                }
+            }, { passive: false });
+        }
 
         function showChapter(id) {
             document.querySelectorAll('.chapter').forEach(c => c.classList.remove('active'));
