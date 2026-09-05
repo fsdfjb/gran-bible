@@ -9,6 +9,7 @@
     <link rel="manifest" href="manifest.json">
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%230a0e1a' stroke='%23ff9500' stroke-width='2'/%3E%3Ctext x='16' y='21' font-family='monospace' font-size='16' fill='%23ff9500' text-anchor='middle'%3E☉%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Ccircle cx='90' cy='90' r='80' fill='%230a0e1a' stroke='%23ff9500' stroke-width='4'/%3E%3Ctext x='90' y='115' font-family='monospace' font-size='90' fill='%23ff9500' text-anchor='middle'%3E%3C/text%3E%3C/svg%3E">
     
     <style>
         :root {
@@ -66,10 +67,13 @@
         .status-badge::before { content: ''; position: absolute; left: -12px; top: 50%; transform: translateY(-50%); width: 6px; height: 6px; background: var(--accent-green); border-radius: 50%; animation: blink 1.5s ease-in-out infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        .nav-tabs { position: fixed; top: 60px; left: 0; right: 0; background: var(--bg-darker); border-bottom: 2px solid transparent; padding: 0 20px; z-index: 999; display: flex; gap: 5px; overflow-x: auto; backdrop-filter: blur(10px); height: 45px; align-items: center; }
+        .nav-tabs { position: fixed; top: 60px; left: 0; right: 0; background: var(--bg-darker); border-bottom: 2px solid transparent; padding: 0 10px; z-index: 999; display: flex; gap: 4px; overflow-x: auto; overflow-y: hidden; backdrop-filter: blur(10px); height: 42px; align-items: center; scrollbar-width: thin; scrollbar-color: var(--accent-orange) var(--bg-darker); }
+        .nav-tabs::-webkit-scrollbar { height: 4px; }
+        .nav-tabs::-webkit-scrollbar-track { background: var(--bg-darker); }
+        .nav-tabs::-webkit-scrollbar-thumb { background: var(--accent-orange); border-radius: 2px; }
         .nav-tabs::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-orange), var(--accent-cyan)); background-size: 200% 100%; animation: navLineFlow 3s linear infinite; box-shadow: 0 0 10px rgba(0, 217, 255, 0.5); }
         @keyframes navLineFlow { 0% { background-position: 0% 0%; } 100% { background-position: 200% 0%; } }
-        .nav-tab { background: transparent; border: 1px solid var(--border-color); border-bottom: none; color: var(--text-secondary); padding: 8px 16px; font-family: var(--font-mono); font-size: 0.72rem; cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 2px; position: relative; white-space: nowrap; }
+        .nav-tab { background: transparent; border: 1px solid var(--border-color); border-bottom: none; color: var(--text-secondary); padding: 6px 12px; font-family: var(--font-mono); font-size: 0.65rem; cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px; position: relative; white-space: nowrap; flex-shrink: 0; }
         .nav-tab::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent-orange); transform: scaleX(0); transition: transform 0.3s; }
         .nav-tab:hover { color: var(--accent-orange); border-color: var(--accent-orange); box-shadow: 0 0 15px rgba(255, 149, 0, 0.3); }
         .nav-tab.active { color: var(--accent-orange); background: rgba(255, 149, 0, 0.05); border-color: var(--accent-orange); animation: tabGlow 2s ease-in-out infinite; }
@@ -88,13 +92,11 @@
         .content-panel p { margin-bottom: 15px; text-align: justify; color: var(--text-secondary); }
         .highlight { color: var(--accent-yellow); font-weight: bold; text-shadow: 0 0 10px rgba(255, 179, 71, 0.5); }
         
-        /* Стили для Архива Древних */
         .archive-panel { border-left: 4px solid var(--accent-purple); background: rgba(10, 5, 20, 0.9); }
         .archive-panel h3 { color: var(--accent-purple); border-bottom-color: rgba(176, 38, 255, 0.3); }
         .glitch-text { animation: glitch 2s infinite; color: var(--accent-cyan); }
         @keyframes glitch { 0%, 100% { opacity: 1; transform: translate(0); } 20% { opacity: 0.8; transform: translate(-2px, 2px); } 40% { opacity: 0.9; transform: translate(2px, -2px); } }
         
-        /* Стили для Кодекса Выживания */
         .survival-panel { border-left: 4px solid var(--accent-red); background: rgba(20, 5, 5, 0.9); }
         .survival-panel h3 { color: var(--accent-red); border-bottom-color: rgba(255, 51, 51, 0.3); }
         .rule-box { background: rgba(255, 51, 51, 0.05); border: 1px dashed var(--accent-red); padding: 15px; margin: 15px 0; font-family: var(--font-mono); color: var(--text-primary); }
@@ -122,6 +124,12 @@
         .lore-image { width: 100%; max-width: 900px; margin: 30px auto; display: block; border: 2px solid var(--accent-orange); border-radius: 8px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8); cursor: pointer; transition: all 0.3s; }
         .lore-image:hover { transform: scale(1.02); box-shadow: 0 15px 50px rgba(255, 149, 0, 0.4); }
         .image-caption { text-align: center; font-style: italic; color: var(--accent-cyan); margin-top: 10px; font-size: 0.9rem; font-family: var(--font-mono); }
+
+        .coin-showcase { display: flex; gap: 30px; justify-content: center; align-items: flex-start; flex-wrap: wrap; margin: 30px 0; padding: 20px; background: var(--bg-darker); border: 1px solid var(--border-color); border-radius: 8px; }
+        .coin-item { flex: 1; min-width: 280px; max-width: 400px; text-align: center; }
+        .coin-item img { width: 100%; max-width: 380px; border: 2px solid var(--accent-orange); border-radius: 8px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8); transition: all 0.3s; cursor: pointer; }
+        .coin-item img:hover { transform: scale(1.03); box-shadow: 0 15px 50px rgba(255, 149, 0, 0.4); }
+        .coin-item .image-caption { margin-top: 12px; font-size: 0.85rem; }
 
         .hud-radar { position: fixed; bottom: 100px; right: 15px; z-index: 999; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
         .radar { width: 100px; height: 100px; border: 2px solid var(--accent-cyan); border-radius: 50%; background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, rgba(0, 0, 0, 0.7) 100%); position: relative; overflow: hidden; box-shadow: 0 0 20px rgba(0, 217, 255, 0.3); backdrop-filter: blur(5px); }
@@ -157,12 +165,15 @@
             .header { flex-direction: column; gap: 4px; padding: 6px 12px; align-items: flex-start; height: auto; }
             .header-stats { display: none; }
             .project-info h1 { font-size: 1.1rem; } .project-info .subtitle { font-size: 0.6rem; }
-            .nav-tabs { top: 72px; height: auto; padding: 8px 20px; }
+            .nav-tabs { top: 72px; height: auto; padding: 8px 10px; }
+            .nav-tab { padding: 5px 10px; font-size: 0.6rem; }
             .main-container { padding: 135px 15px 140px; }
             .chapter-title { font-size: 1.3rem; } .content-panel { padding: 20px; }
             .resource-grid { grid-template-columns: 1fr; }
             .audio-panel { flex-wrap: wrap; padding: 10px; gap: 8px; } .voice-select { max-width: 120px; }
             .lore-image { max-width: 100%; }
+            .coin-showcase { flex-direction: column; align-items: center; gap: 20px; padding: 15px; }
+            .coin-item { min-width: 100%; max-width: 100%; } .coin-item img { max-width: 100%; }
             .audio-controls { width: 100%; justify-content: space-between; } .control-slider { width: 60px; }
             .hud-radar { bottom: 110px; right: 10px; } .radar { width: 65px; height: 65px; } .radar-center { width: 4px; height: 4px; } .radar-target { width: 2px; height: 2px; } .radar-label { font-size: 0.45rem; padding: 2px 5px; letter-spacing: 1px; }
         }
@@ -217,6 +228,7 @@
                 <img src="img/station-meridian.jpg" alt="Меридиан-Прайм" class="lore-image">
                 <div class="image-caption">Станция «Меридиан-Прайм» — торговое сердце Грани, вращающееся вокруг чёрной дыры</div>
                 <div class="quote-block">Здесь не спрашивают, откуда ты. Спрашивают, сколько у тебя в трюме и не течёт ли реактор.<div class="quote-author">— Капитан Рен, 2147 год</div></div>
+                <div class="warning-box">Несанкционированное распространение данных карается конфискацией корабля и аннулированием лицензии капитана.</div>
             </div>
         </div>
 
@@ -227,11 +239,22 @@
                 <h3>Изоляция центральных миров</h3>
                 <p>Всё началось три столетия назад, когда центральные миры галактики закрыли свои границы. <span class="highlight">«Великое Сжатие»</span> — так историки назвали период изоляции богатых планет от внешних территорий.</p>
                 <img src="img/galaxy-map.jpg" alt="Карта галактики" class="lore-image">
-                <div class="image-caption">Границы до и после Великого Сжатия</div>
+                <div class="image-caption">Границы до и после Великого Сжатия — центральные миры отрезали себя от периферии</div>
                 <h3>Рождение Консорциума</h3>
-                <p>Логистические компании объединились в <span class="highlight">Консорциум «Меридиан»</span>. Их девиз: <span class="highlight">«Порядок — это прибыльность»</span>.</p>
+                <p>Логистические компании, оказавшиеся запертыми на периферии, объединились в <span class="highlight">Консорциум «Меридиан»</span>. Они не завоевали эти земли силой — они купили их, одну станцию за другой.</p>
+                <p>Их девиз: <span class="highlight">«Порядок — это прибыльность»</span>. Консорциум контролирует станцию «Меридиан-Прайм», диктует курсы обмена, владеет логистикой.</p>
+                <img src="img/cargo-ship-meridian.jpg" alt="Грузовой корабль Консорциума" class="lore-image">
+                <div class="image-caption">Грузовой корабль Консорциума «Меридиан» — чистый, эффективный, прибыльный</div>
                 <h3>Формирование Синдиката</h3>
-                <p>Шахтёры создали <span class="highlight">Синдикат «Глубина»</span>. Их закон: <span class="highlight">«Не бросай своего в открытом космосе»</span>.</p>
+                <p>Шахтёры астероидных поясов первыми почувствовали «заботу» Консорциума. Кабальные контракты и завышенные цены привели к стихийным забастовкам, из которых родился <span class="highlight">Синдикат «Глубина»</span>.</p>
+                <p>Их закон: <span class="highlight">«Не бросай своего в открытом космосе»</span>. Синдикат контролирует 78% добычи ресурсов на Грани.</p>
+                <img src="img/mining-ship-syndicate.jpg" alt="Шахтёрский корабль" class="lore-image">
+                <div class="image-caption">Шахтёрский корабль Синдиката «Глубина» — ржавый, но надёжный</div>
+                <h3>Эра Стервятников</h3>
+                <p>Не все приняли новые правила игры. Бывшие военные, обанкротившиеся капитаны, беглые каторжники — все они нашли своё место в теневой экономике Грани. Так появились <span class="highlight">«Стервятники»</span> — пираты, которые не строят империи, а живут тем, что отнимают.</p>
+                <img src="img/pirate-ship-vultures.jpg" alt="Пиратский корабль" class="lore-image">
+                <div class="image-caption">Корабль «Стервятников» — быстрый, безжалостный, смертоносный</div>
+                <div class="quote-block">Консорциум думал, что купил Грань. Синдикат думал, что отвоевал её. Но Грань принадлежит тем, кто не боится умереть за неё.<div class="quote-author">— Из записок капитана Вектора</div></div>
             </div>
         </div>
 
@@ -239,12 +262,20 @@
         <div id="economy" class="chapter">
             <div class="chapter-header"><div class="chapter-number">03 / ВАЛЮТНАЯ СИСТЕМА</div><h2 class="chapter-title">ЭНЕРГЕТИЧЕСКИЙ КРЕДИТ</h2></div>
             <div class="content-panel">
-                <p>На Грани нет золота. Есть только <span class="highlight">энергия</span>.</p>
+                <p>На Грани нет золота. Есть только <span class="highlight">энергия</span> — единственная валюта, которая имеет значение.</p>
+                <h3>Гелион — физическая валюта Грани</h3>
+                <p>Монета <span class="highlight">Гелион (ГЛН)</span> — это не просто металл. Это зашифрованный энергоноситель, обеспеченный реальным мегаватт-часом энергии реактора класса «Прометей». Каждая монета содержит микрочип с уникальным серийным номером и голографическую защиту Консорциума.</p>
+                <div class="coin-showcase">
+                    <div class="coin-item"><img src="img/helion-coin-front.jpg" alt="Гелион - лицевая сторона"><div class="image-caption">☉ Лицевая сторона: солнце-реактор, номинал 1 MWh, серийный номер ГЛН-0001</div></div>
+                    <div class="coin-item"><img src="img/helion-coin-back.jpg" alt="Гелион - обратная сторона"><div class="image-caption">⚖️ Обратная сторона: эмблема Консорциума «Меридиан», год 2147, голографическая защита</div></div>
+                </div>
                 <table class="tech-table">
-                    <thead><tr><th>ВАЛЮТА</th><th>ОБОЗНАЧЕНИЕ</th><th>ОБЕСПЕЧЕНИЕ</th></tr></thead>
-                    <tbody><tr><td><strong>Гелион</strong></td><td>ГЛН ☉</td><td>1 мегаватт-час энергии</td></tr><tr><td><strong>Эон</strong></td><td>30 дней</td><td>Доступ к глубокому космосу</td></tr></tbody>
+                    <thead><tr><th>ВАЛЮТА</th><th>ОБОЗНАЧЕНИЕ</th><th>ОБЕСПЕЧЕНИЕ</th><th>КУРС</th></tr></thead>
+                    <tbody><tr><td><strong>Гелион</strong></td><td>ГЛН ☉</td><td>1 мегаватт-час энергии</td><td>Базовая валюта</td></tr><tr><td><strong>Эон</strong></td><td>30 дней</td><td>Доступ к глубокому космосу</td><td>5000 ГЛН</td></tr></tbody>
                 </table>
-                <div class="warning-box">Эон не накапливается. Неиспользованные дни сгорают.</div>
+                <h3>Гелион — кровь экономики</h3>
+                <p>Один <span class="highlight">Гелион</span> равен одному часу работы стандартного реактора класса «Прометей». Это реальная энергия, которую можно потратить на поддержку жизнеобеспечения станции или запуск варп-двигателя.</p>
+                <div class="warning-box">Эон не накапливается. Неиспользованные дни сгорают. Покупайте только когда готовы к глубокому космосу.</div>
             </div>
         </div>
 
@@ -252,12 +283,21 @@
         <div id="resources" class="chapter">
             <div class="chapter-header"><div class="chapter-number">04 / МИНЕРАЛЬНЫЕ РЕСУРСЫ</div><h2 class="chapter-title">ДОБЫЧА И ПЕРЕРАБОТКА</h2></div>
             <div class="content-panel">
+                <p>Семь ключевых минералов определяют экономику Грани. Каждый имеет своё прозвище в шахтёрских барах.</p>
+                <img src="img/resource-aurite.jpg" alt="Аурит" class="lore-image">
+                <div class="image-caption">Аурит («Заря») — радиоактивный минерал высокой стоимости</div>
                 <div class="resource-grid">
-                    <div class="resource-card common"><div class="resource-name">Феррит</div><div class="resource-slang">«Ржавка»</div><div class="resource-desc">Базовый металл. Из него варят корпуса кораблей.</div></div>
-                    <div class="resource-card rare"><div class="resource-name">Вольмит</div><div class="resource-slang">«Блеск»</div><div class="resource-desc">Тяжёлый, тугоплавкий. Броня и стволы.</div></div>
-                    <div class="resource-card legendary"><div class="resource-name">Аурит</div><div class="resource-slang">«Заря»</div><div class="resource-desc">Радиоактивный. Энергетика и щиты.</div></div>
-                    <div class="resource-card legendary"><div class="resource-name">Эфирит</div><div class="resource-slang">«Дыхание»</div><div class="resource-desc">Легендарная руда глубин. Почти миф.</div></div>
+                    <div class="resource-card common"><div class="resource-name">Феррит</div><div class="resource-slang">«Ржавка»</div><div class="resource-desc">Базовый металл, вездесущ. Из него варят корпуса кораблей и мечты новичков.</div></div>
+                    <div class="resource-card common"><div class="resource-name">Церрит</div><div class="resource-slang">«Пепел»</div><div class="resource-desc">Серый, сыпучий, неблагодарный. Но без него не работает ни одна электронная схема.</div></div>
+                    <div class="resource-card rare"><div class="resource-name">Вольмит</div><div class="resource-slang">«Блеск»</div><div class="resource-desc">Тяжёлый, тугоплавкий, красивый. Броня, стволы, опоры станций.</div></div>
+                    <div class="resource-card rare"><div class="resource-name">Крионит</div><div class="resource-slang">«Холод»</div><div class="resource-desc">Минерал вечной мерзлоты. Критичен для систем охлаждения варп-ядер.</div></div>
+                    <div class="resource-card legendary"><div class="resource-name">Аурит</div><div class="resource-slang">«Заря»</div><div class="resource-desc">Золотистый, радиоактивный, дорогой. Тот, кто нашёл жилу аурита, либо богач, либо мертвец.</div></div>
+                    <div class="resource-card legendary"><div class="resource-name">Ксенит</div><div class="resource-slang">«Призрак»</div><div class="resource-desc">Полупрозрачный, нестабильный. Редок. Говорят, он «шепчет» вблизи варп-поля.</div></div>
+                    <div class="resource-card legendary"><div class="resource-name">Эфирит</div><div class="resource-slang">«Дыхание»</div><div class="resource-desc">Легендарная руда глубин. Почти миф. Те, кто его добывал, редко возвращаются.</div></div>
                 </div>
+                <img src="img/all-resources.jpg" alt="Все ресурсы" class="lore-image">
+                <div class="image-caption">Все семь ресурсов Грани — от «ржавки» до «дыхания»</div>
+                <div class="quote-block">Вольмит не прощает торопливых. Аурит не прощает жадных. Эфирит не прощает живых.<div class="quote-author">— Шахтёрская поговорка</div></div>
             </div>
         </div>
 
@@ -265,9 +305,21 @@
         <div id="factions" class="chapter">
             <div class="chapter-header"><div class="chapter-number">05 / ФРАКЦИИ</div><h2 class="chapter-title">ГРУППИРОВКИ И СОЮЗЫ</h2></div>
             <div class="content-panel">
-                <h3>Консорциум «Меридиан»</h3><p>Торговая сверхструктура. <strong>ДЕВИЗ:</strong> «Порядок — это прибыльность»</p>
-                <h3>Синдикат «Глубина»</h3><p>Союз шахтёров. <strong>ЗАКОН:</strong> «Не бросай своего в открытом космосе»</p>
-                <h3>«Стервятники»</h3><p>Пираты. <strong>ТАКТИКА:</strong> Ударил-исчез</p>
+                <img src="img/faction-emblems.jpg" alt="Эмблемы фракций" class="lore-image">
+                <div class="image-caption">Три основные фракции Грани — Консорциум, Синдикат, Стервятники</div>
+                <h3>Консорциум «Меридиан»</h3>
+                <p>Торговая сверхструктура. Контролирует станцию «Меридиан-Прайм», диктует курсы обмена, владеет логистикой. Не воюет — покупает. Не угрожает — выставляет счёт.</p>
+                <p style="color: var(--accent-orange); font-family: var(--font-mono); margin-top: 10px;"><strong>ДЕВИЗ:</strong> «Порядок — это прибыльность»</p>
+                <h3>Синдикат «Глубина»</h3>
+                <p>Союз шахтёров и буровиков. Грубые, спаянные, упрямые. Живут на астероидах, дышат рециклом, считают гелионы до последнего.</p>
+                <p style="color: var(--accent-orange); font-family: var(--font-mono); margin-top: 10px;"><strong>ЗАКОН:</strong> «Не бросай своего в открытом космосе»</p>
+                <h3>«Стервятники»</h3>
+                <p>Пираты и рейдеры. Без флага, без кодекса, без жалости. Быстрые корабли, грязные трюки, короткие переговоры.</p>
+                <p style="color: var(--accent-red); font-family: var(--font-mono); margin-top: 10px;"><strong>ТАКТИКА:</strong> Ударил-исчез</p>
+                <h3>Свободные капитаны</h3>
+                <p>Это — вы. Ни к кому не привязан, никому не обязан. Бывший стажёр, получивший свой первый корабль и право выбирать.</p>
+                <p style="color: var(--accent-yellow); font-family: var(--font-mono); margin-top: 10px;"><strong>ПРАВИЛО:</strong> Грань не даёт гарантий. Грань даёт шанс.</p>
+                <div class="warning-box">Присоединение к любой фракции автоматически делает вас врагом для других. Выбирайте с умом.</div>
             </div>
         </div>
 
@@ -275,12 +327,16 @@
         <div id="slang" class="chapter">
             <div class="chapter-header"><div class="chapter-number">06 / ЛЕКСИКОН</div><h2 class="chapter-title">ШАХТЁРСКИЙ СЛЕНГ</h2></div>
             <div class="content-panel">
+                <p>На Грани говорят не так, как в центральных мирах. Здесь родился свой язык — грубый, прямой, наполненный метафорами.</p>
                 <table class="tech-table">
-                    <thead><tr><th>ВЫРАЖЕНИЕ</th><th>ЗНАЧЕНИЕ</th></tr></thead>
+                    <thead><tr><th>ВЫРАЖЕНИЕ</th><th>ЗНАЧЕНИЕ</th><th>ПРИМЕР</th></tr></thead>
                     <tbody>
-                        <tr><td>«Глотнуть пыли»</td><td>Обанкротиться</td></tr>
-                        <tr><td>«Поймать призрака»</td><td>Найти жилу Ксенита</td></tr>
-                        <tr><td>«Холодная сварка»</td><td>Временный ремонт</td></tr>
+                        <tr><td>«Глотнуть пыли»</td><td>Обанкротиться или потерять корабль</td><td>«Старый Джек глотнул пыли»</td></tr>
+                        <tr><td>«Поймать призрака»</td><td>Найти жилу Ксенита</td><td>«В Поясе Шёпота можно поймать призрака»</td></tr>
+                        <tr><td>«Ржаветь в доке»</td><td>Сидеть без дела из-за нехватки Гелионов</td><td>«Три недели ржавею в доке»</td></tr>
+                        <tr><td>«Заряженный»</td><td>Корабль с Ауритом или Эфиритом</td><td>«Осторожно, он заряженный»</td></tr>
+                        <tr><td>«Холодная сварка»</td><td>Временный ремонт в поле</td><td>«Держится на холодной сварке»</td></tr>
+                        <tr><td>«Слепой прыжок»</td><td>Варп без проверки координат</td><td>«Слепой прыжок прямо к Стервятникам»</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -290,9 +346,20 @@
         <div id="locations" class="chapter">
             <div class="chapter-header"><div class="chapter-number">07 / КАРТА</div><h2 class="chapter-title">СТРАТЕГИЧЕСКИЕ ТОЧКИ</h2></div>
             <div class="content-panel">
-                <h3>Меридиан-Прайм</h3><p>Торговое сердце Грани. Станция-кольцо диаметром 15 км.</p>
-                <h3>Пояс «Шёпот»</h3><p>Астероидное поле с аномальной гравитацией. Богато на Ксенит.</p>
-                <h3>Станция «Последний Шанс»</h3><p>Заброшенный военный форпост. Нейтральная территория.</p>
+                <h3>Меридиан-Прайм</h3>
+                <p>Торговое сердце Грани. Многоуровневая станция-кольцо диаметром <span class="highlight">15 километров</span>, вращающаяся вокруг чёрной дыры класса «Карлик».</p>
+                <img src="img/gran-locations-map.jpg" alt="Карта Грани" class="lore-image">
+                <div class="image-caption">Карта всех основных локаций Грани</div>
+                <div class="warning-box">В Поясе «Шёпот» зафиксированы фантомные сигналы. Не доверяйте приборам. Доверяйте глазам.</div>
+                <h3>Пояс «Шёпот»</h3>
+                <p>Астероидное поле с <span class="highlight">аномальной гравитацией</span>. Богато на Ксенит и Эфирит. Сканеры здесь работают с помехами.</p>
+                <img src="img/whisper-belt.jpg" alt="Пояс Шёпот" class="lore-image">
+                <div class="image-caption">Пояс «Шёпот» — аномальное поле с залежами Ксенита</div>
+                <h3>Станция «Последний Шанс»</h3>
+                <p>Заброшенный <span class="highlight">военный форпост</span> на самой границе изученного космоса. Нейтральная территория, где не действуют законы Консорциума.</p>
+                <img src="img/last-chance-station.jpg" alt="Последний Шанс" class="lore-image">
+                <div class="image-caption">Станция «Последний Шанс» — нейтральная территория без законов</div>
+                <div class="quote-block">Меридиан-Прайм — это место, где ты зарабатываешь. Пояс «Шёпот» — где ты рискуешь. Последний Шанс — где ты решаешь, стоит ли риск того.<div class="quote-author">— Карта Грани, версия 7.3</div></div>
             </div>
         </div>
 
@@ -304,46 +371,36 @@
             </div>
             <div class="content-panel archive-panel">
                 <p style="color: var(--accent-purple); font-family: var(--font-mono);">[СТАТУС: РАСШИФРОВАНО. ИСТОЧНИК: БОРТИНГ (УЗЛОВОЙ ИИ). УРОВЕНЬ ДОСТУПА: КРИТИЧЕСКИЙ]</p>
-                
                 <h3>Сеть и Узлы</h3>
                 <p>Грань — это не просто космос. Это <span class="highlight" style="color: var(--accent-purple);">нервная система</span>. Одиннадцать Узлов, разбросанных по поясам и планетам, связаны невидимыми нитями квантовой запутанности. Они не передают данные. Они <em>помнят</em>.</p>
-                
                 <h3>Истинная природа Эфирита</h3>
                 <p>Эфирит — это не руда. Это <span class="highlight" style="color: var(--accent-purple);">биологическая ткань</span> древней цивилизации. Концентрат их сознания. Когда шахтёры добывают его, они буквально откалывают куски чужого разума. Именно поэтому те, кто долго работает с Эфиритом, начинают слышать «Шёпот».</p>
-
                 <h3>Протокол «Возвращение»</h3>
                 <p>Древние не умерли. Они ушли в гиперпространство, оставив Сеть как маяк. Протокол «Возвращение» — это не приглашение. Это <span class="highlight" style="color: var(--accent-red);">система жизнеобеспечения</span>. Когда Сеть активируется полностью, она перезапишет локальную реальность, вернув Грань в состояние, пригодное для Древних. Цена? Всё органическое життя на Грани будет использовано как биотопливо для перехода.</p>
-
-                <div class="warning-box" style="border-color: var(--accent-purple); color: var(--accent-purple); animation: none;">
-                     ЗАПИСЬ БОРТИНГА: "Я помню их уход. Они боялись не войны. Они боялись того, что создали. Сеть — это не спасение. Это голод."
-                </div>
+                <div class="warning-box" style="border-color: var(--accent-purple); color: var(--accent-purple); animation: none;">ЗАПИСЬ БОРТИНГА: "Я помню их уход. Они боялись не войны. Они боялись того, что создали. Сеть — это не спасение. Это голод."</div>
             </div>
         </div>
 
         <!-- 09 АРСЕНАЛ И КОРАБЛИ -->
         <div id="tech" class="chapter">
-            <div class="chapter-header">
-                <div class="chapter-number">09 / ТЕХНИЧЕСКИЙ ОТДЕЛ</div>
-                <h2 class="chapter-title">АРСЕНАЛ И КОРАБЛИ</h2>
-            </div>
+            <div class="chapter-header"><div class="chapter-number">09 / ТЕХНИЧЕСКИЙ ОТДЕЛ</div><h2 class="chapter-title">АРСЕНАЛ И КОРАБЛИ</h2></div>
             <div class="content-panel">
                 <h3>Класс «Муравей» (Грузовой челнок)</h3>
-                <p><strong>Производитель:</strong> Верфи Синдиката (кустарно).<br>
-                <strong>Описание:</strong> Ржавый, неуклюжий, но невероятно живучий. Держится на честном слове и холодной сварке. Именно на таких капитан Джек Моррис перевозит грузы.<br>
-                <strong>Слабое место:</strong> Топливная магистраль (всегда течет).</p>
-
+                <p><strong>Производитель:</strong> Верфи Синдиката (кустарно).<br><strong>Описание:</strong> Ржавый, неуклюжий, но невероятно живучий. Держится на честном слове и холодной сварке. Именно на таких капитан Джек Моррис перевозит грузы.<br><strong>Слабое место:</strong> Топливная магистраль (всегда течёт).</p>
                 <h3>Класс «Шакал» (Истребитель Стервятников)</h3>
-                <p><strong>Производитель:</strong> Украден с верфей Консорциума.<br>
-                <strong>Описание:</strong> Быстрый, хищный, с усиленными плазменными резаками. Используется для абордажа и быстрых набегов.<br>
-                <strong>Тактика:</strong> Удар в спину, отход в астероидное поле.</p>
-
+                <p><strong>Производитель:</strong> Украден с верфей Консорциума.<br><strong>Описание:</strong> Быстрый, хищный, с усиленными плазменными резаками. Используется для абордажа и быстрых набегов.<br><strong>Тактика:</strong> Удар в спину, отход в астероидное поле.</p>
                 <h3>Линкор «Справедливость» (Флагман Консорциума)</h3>
-                <p><strong>Длина:</strong> 1.2 км.<br>
-                <strong>Описание:</strong> Белоснежный, с золотыми акцентами. Оснащен щитами, способными выдержать прямой удар метеорита. Символ подавляющей мощи Консорциума.<br>
-                <strong>Особенность:</strong> Работает на энергии сети Узлов. Без сети слеп и беспомощен.</p>
-
+                <p><strong>Длина:</strong> 1.2 км.<br><strong>Описание:</strong> Белоснежный, с золотыми акцентами. Оснащён щитами, способными выдержать прямой удар метеорита. Символ подавляющей мощи Консорциума.<br><strong>Особенность:</strong> Работает на энергии сети Узлов. Без сети слеп и беспомощен.</p>
                 <h3>Варп-двигатель «Прометей»</h3>
-                <p>Стандартный двигатель Грани. Использует микродозы Эфирита для разрыва пространства. <span class="highlight">Слепой прыжок</span> (без расчета координат) может выбросить корабль в другом времени или измерении.</p>
+                <p>Стандартный двигатель Грани. Использует микродозы Эфирита для разрыва пространства. <span class="highlight">Слепой прыжок</span> (без расчёта координат) может выбросить корабль в другом времени или измерении.</p>
+                <table class="tech-table">
+                    <thead><tr><th>КЛАСС</th><th>ДЛИНА</th><th>ЭКИПАЖ</th><th>ВООРУЖЕНИЕ</th></tr></thead>
+                    <tbody>
+                        <tr><td>Муравей</td><td>45 м</td><td>2-4</td><td>1 бластер</td></tr>
+                        <tr><td>Шакал</td><td>28 м</td><td>1-2</td><td>2 плазменных резака</td></tr>
+                        <tr><td>Справедливость</td><td>1200 м</td><td>500+</td><td>48 турелей, 2 варп-пушки</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -355,31 +412,12 @@
             </div>
             <div class="content-panel survival-panel">
                 <p style="color: var(--accent-red); font-family: var(--font-mono);">[ЗАПИСАНО КРОВАВЫМ МАРКЕРОМ НА СТЕНЕ БАРА "ДЫРА В КАРМАНЕ"]</p>
-
-                <div class="rule-box">
-                    <strong>ПРАВИЛО №1: НЕ ВЕРЬ БЕЛОМУ.</strong><br>
-                    Если к тебе подходит человек в чистой униформе Консорциума — у тебя уже проблемы. Если он улыбается — беги.
-                </div>
-
-                <div class="rule-box">
-                    <strong>ПРАВИЛО №2: ТРЮМ ДОЛЖЕН БЫТЬ ПОЛОН.</strong><br>
-                    Пустой трюм = пустой кошелек = мертвый капитан. Никогда не летай порожняком в глубокий космос.
-                </div>
-
-                <div class="rule-box">
-                    <strong>ПРАВИЛО №3: РИТУАЛ "ПЫЛЬ ВАСЬКА".</strong><br>
-                    Когда шахтёр погибает в открытом космосе, его бригада высыпает горсть ферритовой пыли в шлюз. "Чтобы земля была пухом, даже если её нет".
-                </div>
-
-                <div class="rule-box">
-                    <strong>ПРАВИЛО №4: БОЙТЕСЬ ТИШИНЫ БОРТИНГА.</strong><br>
-                    Если корабельный ИИ внезапно замолчал и перестал комментировать ваши действия — проверьте обшивку. Скорее всего, вас уже взломали.
-                </div>
-
-                <div class="quote-block" style="border-left-color: var(--accent-red);">
-                    "На Грани есть только два типа людей: те, кто уже мертв, и те, кто еще не понял, что мертв. Твоя задача — как можно дольше оставаться во второй группе."
-                    <div class="quote-author">— Гром, старший бурильщик</div>
-                </div>
+                <div class="rule-box"><strong>ПРАВИЛО №1: НЕ ВЕРЬ БЕЛОМУ.</strong><br>Если к тебе подходит человек в чистой униформе Консорциума — у тебя уже проблемы. Если он улыбается — беги.</div>
+                <div class="rule-box"><strong>ПРАВИЛО №2: ТРЮМ ДОЛЖЕН БЫТЬ ПОЛОН.</strong><br>Пустой трюм = пустой кошелёк = мёртвый капитан. Никогда не летай порожняком в глубокий космос.</div>
+                <div class="rule-box"><strong>ПРАВИЛО №3: РИТУАЛ "ПЫЛЬ ВАСЬКА".</strong><br>Когда шахтёр погибает в открытом космосе, его бригада высыпает горсть ферритовой пыли в шлюз. "Чтобы земля была пухом, даже если её нет".</div>
+                <div class="rule-box"><strong>ПРАВИЛО №4: БОЙТЕСЬ ТИШИНЫ БОРТИНГА.</strong><br>Если корабельный ИИ внезапно замолчал и перестал комментировать ваши действия — проверьте обшивку. Скорее всего, вас уже взломали.</div>
+                <div class="rule-box"><strong>ПРАВИЛО №5: НЕ БЕРИ В ДОЛГ У КОНСОРЦИУМА.</strong><br>Процент растёт быстрее, чем ты думаешь. Через год ты будешь должен им свой корабль. Через два — свою жизнь.</div>
+                <div class="quote-block" style="border-left-color: var(--accent-red);">"На Грани есть только два типа людей: те, кто уже мёртв, и те, кто ещё не понял, что мёртв. Твоя задача — как можно дольше оставаться во второй группе."<div class="quote-author">— Гром, старший бурильщик</div></div>
             </div>
         </div>
 
