@@ -102,12 +102,40 @@
         .rule-box { background: rgba(255, 51, 51, 0.05); border: 1px dashed var(--accent-red); padding: 15px; margin: 15px 0; font-family: var(--font-mono); color: var(--text-primary); }
         .rule-box strong { color: var(--accent-red); }
 
-        .tech-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-family: var(--font-mono); font-size: 0.85rem; display: block; overflow-x: auto; }
-        .tech-table thead { display: table; width: 100%; table-layout: fixed; }
-        .tech-table tbody { display: table; width: 100%; table-layout: fixed; }
-        .tech-table th, .tech-table td { padding: 12px; text-align: left; border: 1px solid var(--border-color); }
-        .tech-table th { background: rgba(255, 149, 0, 0.1); color: var(--accent-orange); text-transform: uppercase; letter-spacing: 1px; font-size: 0.75rem; }
-        .tech-table tr:hover { background: rgba(255, 149, 0, 0.05); transition: background 0.3s; }
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tech-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-family: var(--font-mono); 
+            font-size: 0.85rem;
+            min-width: 600px;
+        }
+        
+        .tech-table th, .tech-table td { 
+            padding: 12px; 
+            text-align: left; 
+            border: 1px solid var(--border-color); 
+        }
+        
+        .tech-table th { 
+            background: rgba(255, 149, 0, 0.1); 
+            color: var(--accent-orange); 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            font-size: 0.75rem; 
+        }
+        
+        .tech-table tr:hover { 
+            background: rgba(255, 149, 0, 0.05); 
+            transition: background 0.3s; 
+        }
 
         .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin: 20px 0; }
         .resource-card { background: var(--bg-darker); border: 1px solid var(--border-color); border-left: 3px solid var(--accent-orange); padding: 20px; position: relative; transition: all 0.3s; }
@@ -119,7 +147,7 @@
 
         .warning-box { background: rgba(255, 51, 51, 0.1); border: 1px solid var(--accent-red); border-left: 4px solid var(--accent-red); padding: 20px; margin: 20px 0; font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-red); animation: warningPulse 2s ease-in-out infinite; }
         @keyframes warningPulse { 0%, 100% { box-shadow: 0 0 10px rgba(255, 51, 51, 0.3); } 50% { box-shadow: 0 0 20px rgba(255, 51, 51, 0.6); } }
-        .warning-box::before { content: ' ВНИМАНИЕ: '; font-weight: bold; }
+        .warning-box::before { content: '⚠ ВНИМАНИЕ: '; font-weight: bold; }
         .quote-block { background: var(--bg-darker); border-left: 4px solid var(--accent-cyan); padding: 20px; margin: 20px 0; font-style: italic; color: var(--text-secondary); }
         .quote-author { text-align: right; color: var(--accent-orange); font-style: normal; font-size: 0.85rem; margin-top: 10px; font-family: var(--font-mono); }
 
@@ -179,8 +207,41 @@
             .coin-item { min-width: 100%; max-width: 100%; } .coin-item img { max-width: 100%; }
             .audio-controls { width: 100%; justify-content: space-between; } .control-slider { width: 60px; }
             .hud-radar { bottom: 110px; right: 10px; } .radar { width: 65px; height: 65px; } .radar-center { width: 4px; height: 4px; } .radar-target { width: 2px; height: 2px; } .radar-label { font-size: 0.45rem; padding: 2px 5px; letter-spacing: 1px; }
-            .tech-table { font-size: 0.75rem; }
-            .tech-table th, .tech-table td { padding: 8px; white-space: nowrap; }
+            
+            /* Улучшенная адаптация таблиц для мобильных */
+            .table-wrapper {
+                border: 1px solid var(--accent-orange);
+                border-radius: 6px;
+                margin: 15px -10px;
+                box-shadow: 0 0 15px rgba(255, 149, 0, 0.2);
+            }
+            
+            .tech-table { 
+                font-size: 0.7rem;
+                min-width: 500px;
+            }
+            
+            .tech-table th, .tech-table td { 
+                padding: 8px 10px;
+                white-space: nowrap;
+            }
+            
+            .tech-table th {
+                font-size: 0.65rem;
+                background: rgba(255, 149, 0, 0.15);
+            }
+            
+            /* Подсказка о прокрутке */
+            .table-wrapper::after {
+                content: '← →';
+                position: absolute;
+                bottom: 5px;
+                right: 10px;
+                font-size: 0.6rem;
+                color: var(--accent-orange);
+                opacity: 0.6;
+                pointer-events: none;
+            }
         }
     </style>
 </head>
@@ -272,7 +333,7 @@
                 <p>Монета <span class="highlight">Гелион (ГЛН)</span> — это не просто металл. Это зашифрованный энергоноситель, обеспеченный реальным мегаватт-часом энергии реактора класса «Прометей». Каждая монета содержит микрочип с уникальным серийным номером и голографическую защиту Консорциума.</p>
                 <div class="coin-showcase">
                     <div class="coin-item"><img src="img/helion-coin-front.jpg" alt="Гелион - лицевая сторона"><div class="image-caption">☉ Лицевая сторона: солнце-реактор, номинал 1 MWh, серийный номер ГЛН-0001</div></div>
-                    <div class="coin-item"><img src="img/helion-coin-back.jpg" alt="Гелион - обратная сторона"><div class="image-caption">⚖️ Обратная сторона: эмблема Консорциума «Меридиан», год 2147, голографическая защита</div></div>
+                    <div class="coin-item"><img src="img/helion-coin-back.jpg" alt="Гелион - обратная сторона"><div class="image-caption">️ Обратная сторона: эмблема Консорциума «Меридиан», год 2147, голографическая защита</div></div>
                 </div>
                 
                 <h3>Эон — доступ к глубокому космосу</h3>
@@ -283,13 +344,15 @@
                     <div class="image-caption">Карта «Эон» — 30 дней доступа к глубокому космосу, стоимость 5000 ГЛН</div>
                 </div>
                 
-                <table class="tech-table">
-                    <thead><tr><th>ВАЛЮТА</th><th>ОБОЗНАЧЕНИЕ</th><th>ОБЕСПЕЧЕНИЕ</th><th>КУРС</th></tr></thead>
-                    <tbody>
-                        <tr><td><strong>Гелион</strong></td><td>ГЛН ☉</td><td>1 мегаватт-час энергии</td><td>Базовая валюта</td></tr>
-                        <tr><td><strong>Эон</strong></td><td>30 дней</td><td>Доступ к глубокому космосу</td><td>5000 ГЛН</td></tr>
-                    </tbody>
-                </table>
+                <div class="table-wrapper">
+                    <table class="tech-table">
+                        <thead><tr><th>ВАЛЮТА</th><th>ОБОЗНАЧЕНИЕ</th><th>ОБЕСПЕЧЕНИЕ</th><th>КУРС</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>Гелион</strong></td><td>ГЛН ☉</td><td>1 мегаватт-час энергии</td><td>Базовая валюта</td></tr>
+                            <tr><td><strong>Эон</strong></td><td>30 дней</td><td>Доступ к глубокому космосу</td><td>5000 ГЛН</td></tr>
+                        </tbody>
+                    </table>
+                </div>
                 
                 <h3>Гелион — кровь экономики</h3>
                 <p>Один <span class="highlight">Гелион</span> равен одному часу работы стандартного реактора класса «Прометей». Это реальная энергия, которую можно потратить на поддержку жизнеобеспечения станции или запуск варп-двигателя.</p>
@@ -348,17 +411,19 @@
                 <p>На Грани говорят не так, как в центральных мирах. Здесь родился свой язык — грубый, прямой, наполненный метафорами.</p>
                 <img src="img/slang-bar.jpg" alt="Бар Дыра в кармане" class="lore-image">
                 <div class="image-caption">Бар «Дыра в кармане» — где рождается сленг Грани</div>
-                <table class="tech-table">
-                    <thead><tr><th>ВЫРАЖЕНИЕ</th><th>ЗНАЧЕНИЕ</th><th>ПРИМЕР</th></tr></thead>
-                    <tbody>
-                        <tr><td>«Глотнуть пыли»</td><td>Обанкротиться или потерять корабль</td><td>«Старый Джек глотнул пыли»</td></tr>
-                        <tr><td>«Поймать призрака»</td><td>Найти жилу Ксенита</td><td>«В Поясе Шёпота можно поймать призрака»</td></tr>
-                        <tr><td>«Ржаветь в доке»</td><td>Сидеть без дела из-за нехватки Гелионов</td><td>«Три недели ржавею в доке»</td></tr>
-                        <tr><td>«Заряженный»</td><td>Корабль с Ауритом или Эфиритом</td><td>«Осторожно, он заряженный»</td></tr>
-                        <tr><td>«Холодная сварка»</td><td>Временный ремонт в поле</td><td>«Держится на холодной сварке»</td></tr>
-                        <tr><td>«Слепой прыжок»</td><td>Варп без проверки координат</td><td>«Слепой прыжок прямо к Стервятникам»</td></tr>
-                    </tbody>
-                </table>
+                <div class="table-wrapper">
+                    <table class="tech-table">
+                        <thead><tr><th>ВЫРАЖЕНИЕ</th><th>ЗНАЧЕНИЕ</th><th>ПРИМЕР</th></tr></thead>
+                        <tbody>
+                            <tr><td>«Глотнуть пыли»</td><td>Обанкротиться или потерять корабль</td><td>«Старый Джек глотнул пыли»</td></tr>
+                            <tr><td>«Поймать призрака»</td><td>Найти жилу Ксенита</td><td>«В Поясе Шёпота можно поймать призрака»</td></tr>
+                            <tr><td>«Ржаветь в доке»</td><td>Сидеть без дела из-за нехватки Гелионов</td><td>«Три недели ржавею в доке»</td></tr>
+                            <tr><td>«Заряженный»</td><td>Корабль с Ауритом или Эфиритом</td><td>«Осторожно, он заряженный»</td></tr>
+                            <tr><td>«Холодная сварка»</td><td>Временный ремонт в поле</td><td>«Держится на холодной сварке»</td></tr>
+                            <tr><td>«Слепой прыжок»</td><td>Варп без проверки координат</td><td>«Слепой прыжок прямо к Стервятникам»</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -417,14 +482,16 @@
                 <p><strong>Длина:</strong> 1.2 км.<br><strong>Описание:</strong> Белоснежный, с золотыми акцентами. Оснащён щитами, способными выдержать прямой удар метеорита. Символ подавляющей мощи Консорциума.<br><strong>Особенность:</strong> Работает на энергии сети Узлов. Без сети слеп и беспомощен.</p>
                 <h3>Варп-двигатель «Прометей»</h3>
                 <p>Стандартный двигатель Грани. Использует микродозы Эфирита для разрыва пространства. <span class="highlight">Слепой прыжок</span> (без расчёта координат) может выбросить корабль в другом времени или измерении.</p>
-                <table class="tech-table">
-                    <thead><tr><th>КЛАСС</th><th>ДЛИНА</th><th>ЭКИПАЖ</th><th>ВООРУЖЕНИЕ</th></tr></thead>
-                    <tbody>
-                        <tr><td>Муравей</td><td>45 м</td><td>2-4</td><td>1 бластер</td></tr>
-                        <tr><td>Шакал</td><td>28 м</td><td>1-2</td><td>2 плазменных резака</td></tr>
-                        <tr><td>Справедливость</td><td>1200 м</td><td>500+</td><td>48 турелей, 2 варп-пушки</td></tr>
-                    </tbody>
-                </table>
+                <div class="table-wrapper">
+                    <table class="tech-table">
+                        <thead><tr><th>КЛАСС</th><th>ДЛИНА</th><th>ЭКИПАЖ</th><th>ВООРУЖЕНИЕ</th></tr></thead>
+                        <tbody>
+                            <tr><td>Муравей</td><td>45 м</td><td>2-4</td><td>1 бластер</td></tr>
+                            <tr><td>Шакал</td><td>28 м</td><td>1-2</td><td>2 плазменных резака</td></tr>
+                            <tr><td>Справедливость</td><td>1200 м</td><td>500+</td><td>48 турелей, 2 варп-пушки</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
