@@ -117,7 +117,7 @@
 
         .warning-box { background: rgba(255, 51, 51, 0.1); border: 1px solid var(--accent-red); border-left: 4px solid var(--accent-red); padding: 20px; margin: 20px 0; font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-red); animation: warningPulse 2s ease-in-out infinite; }
         @keyframes warningPulse { 0%, 100% { box-shadow: 0 0 10px rgba(255, 51, 51, 0.3); } 50% { box-shadow: 0 0 20px rgba(255, 51, 51, 0.6); } }
-        .warning-box::before { content: ' ВНИМАНИЕ: '; font-weight: bold; }
+        .warning-box::before { content: '⚠ ВНИМАНИЕ: '; font-weight: bold; }
         .quote-block { background: var(--bg-darker); border-left: 4px solid var(--accent-cyan); padding: 20px; margin: 20px 0; font-style: italic; color: var(--text-secondary); }
         .quote-author { text-align: right; color: var(--accent-orange); font-style: normal; font-size: 0.85rem; margin-top: 10px; font-family: var(--font-mono); }
 
@@ -328,6 +328,8 @@
             <div class="chapter-header"><div class="chapter-number">06 / ЛЕКСИКОН</div><h2 class="chapter-title">ШАХТЁРСКИЙ СЛЕНГ</h2></div>
             <div class="content-panel">
                 <p>На Грани говорят не так, как в центральных мирах. Здесь родился свой язык — грубый, прямой, наполненный метафорами.</p>
+                <img src="img/slang-bar.jpg" alt="Бар Дыра в кармане" class="lore-image">
+                <div class="image-caption">Бар «Дыра в кармане» — где рождается сленг Грани</div>
                 <table class="tech-table">
                     <thead><tr><th>ВЫРАЖЕНИЕ</th><th>ЗНАЧЕНИЕ</th><th>ПРИМЕР</th></tr></thead>
                     <tbody>
@@ -371,6 +373,8 @@
             </div>
             <div class="content-panel archive-panel">
                 <p style="color: var(--accent-purple); font-family: var(--font-mono);">[СТАТУС: РАСШИФРОВАНО. ИСТОЧНИК: БОРТИНГ (УЗЛОВОЙ ИИ). УРОВЕНЬ ДОСТУПА: КРИТИЧЕСКИЙ]</p>
+                <img src="img/archive-network.jpg" alt="Сеть Узлов" class="lore-image">
+                <div class="image-caption">Сеть Узлов — нервная система Грани</div>
                 <h3>Сеть и Узлы</h3>
                 <p>Грань — это не просто космос. Это <span class="highlight" style="color: var(--accent-purple);">нервная система</span>. Одиннадцать Узлов, разбросанных по поясам и планетам, связаны невидимыми нитями квантовой запутанности. Они не передают данные. Они <em>помнят</em>.</p>
                 <h3>Истинная природа Эфирита</h3>
@@ -385,6 +389,8 @@
         <div id="tech" class="chapter">
             <div class="chapter-header"><div class="chapter-number">09 / ТЕХНИЧЕСКИЙ ОТДЕЛ</div><h2 class="chapter-title">АРСЕНАЛ И КОРАБЛИ</h2></div>
             <div class="content-panel">
+                <img src="img/arsenal-ships.jpg" alt="Корабли Грани" class="lore-image">
+                <div class="image-caption">Три класса кораблей Грани — от ржавого «Муравья» до линкора «Справедливость»</div>
                 <h3>Класс «Муравей» (Грузовой челнок)</h3>
                 <p><strong>Производитель:</strong> Верфи Синдиката (кустарно).<br><strong>Описание:</strong> Ржавый, неуклюжий, но невероятно живучий. Держится на честном слове и холодной сварке. Именно на таких капитан Джек Моррис перевозит грузы.<br><strong>Слабое место:</strong> Топливная магистраль (всегда течёт).</p>
                 <h3>Класс «Шакал» (Истребитель Стервятников)</h3>
@@ -412,6 +418,8 @@
             </div>
             <div class="content-panel survival-panel">
                 <p style="color: var(--accent-red); font-family: var(--font-mono);">[ЗАПИСАНО КРОВАВЫМ МАРКЕРОМ НА СТЕНЕ БАРА "ДЫРА В КАРМАНЕ"]</p>
+                <img src="img/survival-bar.jpg" alt="Бар с правилами" class="lore-image">
+                <div class="image-caption">Бар «Дыра в кармане» — где записаны законы выживания</div>
                 <div class="rule-box"><strong>ПРАВИЛО №1: НЕ ВЕРЬ БЕЛОМУ.</strong><br>Если к тебе подходит человек в чистой униформе Консорциума — у тебя уже проблемы. Если он улыбается — беги.</div>
                 <div class="rule-box"><strong>ПРАВИЛО №2: ТРЮМ ДОЛЖЕН БЫТЬ ПОЛОН.</strong><br>Пустой трюм = пустой кошелёк = мёртвый капитан. Никогда не летай порожняком в глубокий космос.</div>
                 <div class="rule-box"><strong>ПРАВИЛО №3: РИТУАЛ "ПЫЛЬ ВАСЬКА".</strong><br>Когда шахтёр погибает в открытом космосе, его бригада высыпает горсть ферритовой пыли в шлюз. "Чтобы земля была пухом, даже если её нет".</div>
@@ -470,7 +478,6 @@
         }
         animateStars();
 
-        // Прокрутка навигации колесом мыши (только на десктопе)
         const navTabs = document.getElementById('navTabs');
         if (navTabs && window.innerWidth > 768) {
             navTabs.addEventListener('wheel', (e) => {
